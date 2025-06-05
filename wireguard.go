@@ -31,15 +31,29 @@ func CreateIPCRequest(conf *DeviceConfig) (*DeviceSetting, error) {
 		request.WriteString(fmt.Sprintf("listen_port=%d\n", *conf.ListenPort))
 	}
 
-	request.WriteString(fmt.Sprintf("jc=%d\n", conf.Jc))
-	request.WriteString(fmt.Sprintf("jmin=%d\n", conf.Jmin))
-	request.WriteString(fmt.Sprintf("jmax=%d\n", conf.Jmax))
-	request.WriteString(fmt.Sprintf("s1=%d\n", conf.S1))
-	request.WriteString(fmt.Sprintf("s2=%d\n", conf.S2))
-	request.WriteString(fmt.Sprintf("h1=%d\n", conf.H1))
-	request.WriteString(fmt.Sprintf("h2=%d\n", conf.H2))
-	request.WriteString(fmt.Sprintf("h3=%d\n", conf.H3))
-	request.WriteString(fmt.Sprintf("h4=%d\n", conf.H4))
+	if conf.ASecConfig != nil {
+		aSecConfig := conf.ASecConfig
+		request.WriteString(
+			fmt.Sprintf(heredoc.Doc(`
+jc=%d
+jmin=%d
+jmax=%d
+s1=%d
+s2=%d
+h1=%d
+h2=%d
+h3=%d
+h4=%d
+`),
+				aSecConfig.junkPacketCount,
+				aSecConfig.junkPacketMinSize, aSecConfig.junkPacketMaxSize,
+
+				aSecConfig.initPacketJunkSize, aSecConfig.responsePacketJunkSize,
+
+				aSecConfig.initPacketMagicHeader, aSecConfig.responsePacketMagicHeader,
+				aSecConfig.underloadPacketMagicHeader, aSecConfig.transportPacketMagicHeader,
+			))
+	}
 
 	for _, peer := range conf.Peers {
 		request.WriteString(fmt.Sprintf(heredoc.Doc(`

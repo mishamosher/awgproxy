@@ -21,6 +21,18 @@ type PeerConfig struct {
 	AllowedIPs   []netip.Prefix
 }
 
+type ASecConfigType struct {
+	junkPacketCount            int    // Jc
+	junkPacketMinSize          int    // Jmin
+	junkPacketMaxSize          int    // Jmax
+	initPacketJunkSize         int    // s1
+	responsePacketJunkSize     int    // s2
+	initPacketMagicHeader      uint32 // h1
+	responsePacketMagicHeader  uint32 // h2
+	underloadPacketMagicHeader uint32 // h3
+	transportPacketMagicHeader uint32 // h4
+}
+
 // DeviceConfig contains the information to initiate a wireguard connection
 type DeviceConfig struct {
 	SecretKey          string
@@ -31,15 +43,7 @@ type DeviceConfig struct {
 	ListenPort         *int
 	CheckAlive         []netip.Addr
 	CheckAliveInterval int
-	Jc                 int
-	Jmin               int
-	Jmax               int
-	S1                 int
-	S2                 int
-	H1                 uint32
-	H2                 uint32
-	H3                 uint32
-	H4                 uint32
+	ASecConfig         *ASecConfigType
 }
 
 type TCPClientTunnelConfig struct {
@@ -243,34 +247,6 @@ func resolveIPPAndPort(addr string) (string, error) {
 	return net.JoinHostPort(ip.String(), port), nil
 }
 
-func ParseIntFromSection(device *DeviceConfig, section *ini.Section, keyName string) (int, error) {
-	sectionKey, err := section.GetKey(keyName)
-	if err != nil {
-		return 0, err
-	}
-
-	value, err := sectionKey.Int()
-	if err != nil {
-		return 0, err
-	}
-
-	return value, nil
-}
-
-func ParseUintFromSection(device *DeviceConfig, section *ini.Section, keyName string) (uint32, error) {
-	sectionKey, err := section.GetKey(keyName)
-	if err != nil {
-		return 0, err
-	}
-
-	value, err := sectionKey.Uint()
-	if err != nil {
-		return 0, err
-	}
-
-	return uint32(value), nil
-}
-
 // ParseInterface parses the [Interface] section and extract the information into `device`
 func ParseInterface(cfg *ini.File, device *DeviceConfig) error {
 	sections, err := cfg.SectionsByName("Interface")
@@ -314,60 +290,6 @@ func ParseInterface(cfg *ini.File, device *DeviceConfig) error {
 		device.ListenPort = &value
 	}
 
-	junkPacketCount, err := ParseIntFromSection(device, section, "Jc")
-	if err != nil {
-		return err
-	}
-	device.Jc = junkPacketCount
-
-	junkPacketMinSize, err := ParseIntFromSection(device, section, "Jmin")
-	if err != nil {
-		return err
-	}
-	device.Jmin = junkPacketMinSize
-
-	junkPacketMaxSize, err := ParseIntFromSection(device, section, "Jmax")
-	if err != nil {
-		return err
-	}
-	device.Jmax = junkPacketMaxSize
-
-	initPacketJunkSize, err := ParseIntFromSection(device, section, "S1")
-	if err != nil {
-		return err
-	}
-	device.S1 = initPacketJunkSize
-
-	responsePacketJunkSize, err := ParseIntFromSection(device, section, "S2")
-	if err != nil {
-		return err
-	}
-	device.S2 = responsePacketJunkSize
-
-	initPacketMagicHeader, err := ParseUintFromSection(device, section, "H1")
-	if err != nil {
-		return err
-	}
-	device.H1 = initPacketMagicHeader
-
-	responsePacketMagicHeader, err := ParseUintFromSection(device, section, "H2")
-	if err != nil {
-		return err
-	}
-	device.H2 = responsePacketMagicHeader
-
-	underloadPacketMagicHeader, err := ParseUintFromSection(device, section, "H3")
-	if err != nil {
-		return err
-	}
-	device.H3 = underloadPacketMagicHeader
-
-	transportPacketMagicHeader, err := ParseUintFromSection(device, section, "H4")
-	if err != nil {
-		return err
-	}
-	device.H4 = transportPacketMagicHeader
-
 	checkAlive, err := parseNetIP(section, "CheckAlive")
 	if err != nil {
 		return err
@@ -385,6 +307,159 @@ func ParseInterface(cfg *ini.File, device *DeviceConfig) error {
 		}
 
 		device.CheckAliveInterval = value
+	}
+
+	aSecConfig, err := ParseASecConfig(section)
+	if err != nil {
+		return err
+	}
+	device.ASecConfig = aSecConfig
+
+	return nil
+}
+
+func ParseASecConfig(section *ini.Section) (*ASecConfigType, error) {
+	var aSecConfig *ASecConfigType
+
+	if sectionKey, err := section.GetKey("Jc"); err == nil {
+		value, err := sectionKey.Int()
+		if err != nil {
+			return nil, err
+		}
+		if aSecConfig == nil {
+			aSecConfig = &ASecConfigType{}
+		}
+		aSecConfig.junkPacketCount = value
+	}
+
+	if sectionKey, err := section.GetKey("Jmin"); err == nil {
+		value, err := sectionKey.Int()
+		if err != nil {
+			return nil, err
+		}
+		if aSecConfig == nil {
+			aSecConfig = &ASecConfigType{}
+		}
+		aSecConfig.junkPacketMinSize = value
+	}
+
+	if sectionKey, err := section.GetKey("Jmax"); err == nil {
+		value, err := sectionKey.Int()
+		if err != nil {
+			return nil, err
+		}
+		if aSecConfig == nil {
+			aSecConfig = &ASecConfigType{}
+		}
+		aSecConfig.junkPacketMaxSize = value
+	}
+
+	if sectionKey, err := section.GetKey("S1"); err == nil {
+		value, err := sectionKey.Int()
+		if err != nil {
+			return nil, err
+		}
+		if aSecConfig == nil {
+			aSecConfig = &ASecConfigType{}
+		}
+		aSecConfig.initPacketJunkSize = value
+	}
+
+	if sectionKey, err := section.GetKey("S2"); err == nil {
+		value, err := sectionKey.Int()
+		if err != nil {
+			return nil, err
+		}
+		if aSecConfig == nil {
+			aSecConfig = &ASecConfigType{}
+		}
+		aSecConfig.responsePacketJunkSize = value
+	}
+
+	if sectionKey, err := section.GetKey("H1"); err == nil {
+		value, err := sectionKey.Uint()
+		if err != nil {
+			return nil, err
+		}
+		if aSecConfig == nil {
+			aSecConfig = &ASecConfigType{}
+		}
+		aSecConfig.initPacketMagicHeader = uint32(value)
+	}
+
+	if sectionKey, err := section.GetKey("H2"); err == nil {
+		value, err := sectionKey.Uint()
+		if err != nil {
+			return nil, err
+		}
+		if aSecConfig == nil {
+			aSecConfig = &ASecConfigType{}
+		}
+		aSecConfig.responsePacketMagicHeader = uint32(value)
+	}
+
+	if sectionKey, err := section.GetKey("H3"); err == nil {
+		value, err := sectionKey.Uint()
+		if err != nil {
+			return nil, err
+		}
+		if aSecConfig == nil {
+			aSecConfig = &ASecConfigType{}
+		}
+		aSecConfig.underloadPacketMagicHeader = uint32(value)
+	}
+
+	if sectionKey, err := section.GetKey("H4"); err == nil {
+		value, err := sectionKey.Uint()
+		if err != nil {
+			return nil, err
+		}
+		if aSecConfig == nil {
+			aSecConfig = &ASecConfigType{}
+		}
+		aSecConfig.transportPacketMagicHeader = uint32(value)
+	}
+
+	if err := ValidateASecConfig(aSecConfig); err != nil {
+		return nil, err
+	}
+
+	return aSecConfig, nil
+}
+
+func ValidateASecConfig(config *ASecConfigType) error {
+	if config == nil {
+		return nil
+	}
+	jc := config.junkPacketCount
+	jmin := config.junkPacketMinSize
+	jmax := config.junkPacketMaxSize
+	if jc < 1 || jc > 128 {
+		return errors.New("value of the Jc field must be within the range of 1 to 128")
+	}
+	if jmin > jmax {
+		return errors.New("value of the Jmin field must be less than or equal to Jmax field value")
+	}
+	if jmax > 1280 {
+		return errors.New("value of the Jmax field must be less than or equal 1280")
+	}
+
+	s1 := config.initPacketJunkSize
+	s2 := config.responsePacketJunkSize
+	const messageInitiationSize = 148
+	const messageResponseSize = 92
+	if messageInitiationSize+s1 == messageResponseSize+s2 {
+		return errors.New(
+			"value of the field S1 + message initiation size (148) must not equal S2 + message response size (92)",
+		)
+	}
+
+	h1 := config.initPacketMagicHeader
+	h2 := config.responsePacketMagicHeader
+	h3 := config.underloadPacketMagicHeader
+	h4 := config.transportPacketMagicHeader
+	if (h1 == h2) || (h1 == h3) || (h1 == h4) || (h2 == h3) || (h2 == h4) || (h3 == h4) {
+		return errors.New("values of the H1-H4 fields must be unique")
 	}
 
 	return nil
