@@ -25,3 +25,5 @@ require (
 )
 
 replace github.com/amnezia-vpn/amneziawg-go => github.com/mishamosher/amneziawg-go v0.2.12-1
+
+replace github.com/things-go/go-socks5 => github.com/mishamosher/go-socks5 v0.0.6-1
