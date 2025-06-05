@@ -17,17 +17,17 @@ jobs:
       - name: Setting up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.24.3"
       - name: Building Windows amd64 Version
         run: |
-          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o WireProxy_amd64.exe -v ./cmd/wireproxy
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o AWGProxy_amd64.exe -v ./cmd/awgproxy
           mkdir release_windows_amd64
-          mv WireProxy_amd64.exe wireproxy.exe
-          cp wireproxy.exe release_windows_amd64/wireproxy.exe
+          mv AWGProxy_amd64.exe awgproxy.exe
+          cp awgproxy.exe release_windows_amd64/awgproxy.exe
       - name: Upload Windows amd64 Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_windows_amd64
+          name: AWGProxy_windows_amd64
           path: release_windows_amd64
   windowsArm64Build:
     name: Build Windows arm64 Version
@@ -37,17 +37,17 @@ jobs:
       - name: Setting up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.24.3"
       - name: Building Windows arm64 Version
         run: |
-          CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -o WireProxy_arm64.exe -v ./cmd/wireproxy
+          CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -o AWGProxy_arm64.exe -v ./cmd/awgproxy
           mkdir release_windows_arm64
-          mv WireProxy_arm64.exe wireproxy.exe
-          cp wireproxy.exe release_windows_arm64/wireproxy.exe
+          mv AWGProxy_arm64.exe awgproxy.exe
+          cp awgproxy.exe release_windows_arm64/awgproxy.exe
       - name: Upload Windows arm64 Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_windows_arm64
+          name: AWGProxy_windows_arm64
           path: release_windows_arm64
   linuxAmd64Build:
     name: Build Linux amd64 Version
@@ -57,17 +57,17 @@ jobs:
       - name: Setting up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.24.3"
       - name: Building Linux amd64 Version
         run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o WireProxy_amd64 -v ./cmd/wireproxy
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o AWGProxy_amd64 -v ./cmd/awgproxy
           mkdir release_linux_amd64
-          mv WireProxy_amd64 wireproxy
-          cp wireproxy release_linux_amd64/wireproxy
+          mv AWGProxy_amd64 awgproxy
+          cp awgproxy release_linux_amd64/awgproxy
       - name: Upload Linux amd64 Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_linux_amd64
+          name: AWGProxy_linux_amd64
           path: release_linux_amd64
   linuxArm64Build:
     name: Build Linux arm64 Version
@@ -77,17 +77,17 @@ jobs:
       - name: Setting up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.24.3"
       - name: Building Linux arm64 Version
         run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o WireProxy_arm64 -v ./cmd/wireproxy
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o AWGProxy_arm64 -v ./cmd/awgproxy
           mkdir release_linux_arm64
-          mv WireProxy_arm64 wireproxy
-          cp wireproxy release_linux_arm64/wireproxy
+          mv AWGProxy_arm64 awgproxy
+          cp awgproxy release_linux_arm64/awgproxy
       - name: Upload Linux arm64 Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_linux_arm64
+          name: AWGProxy_linux_arm64
           path: release_linux_arm64
   linuxS390xBuild:
     name: Build Linux s390x Version
@@ -97,17 +97,17 @@ jobs:
       - name: Setting up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.24.3"
       - name: Building Linux s390x Version
         run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -o WireProxy_s390x -v ./cmd/wireproxy
+          CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -o AWGProxy_s390x -v ./cmd/awgproxy
           mkdir release_linux_s390x
-          mv WireProxy_s390x wireproxy
-          cp wireproxy release_linux_s390x/wireproxy
+          mv AWGProxy_s390x awgproxy
+          cp awgproxy release_linux_s390x/awgproxy
       - name: Upload Linux s390x Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_linux_s390x
+          name: AWGProxy_linux_s390x
           path: release_linux_s390x
   darwinAmd64Build:
     name: Build Darwin amd64 Version
@@ -117,17 +117,17 @@ jobs:
       - name: Setting up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.24.3"
       - name: Building Darwin amd64 Version
         run: |
-          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o WireProxy_amd64 -v ./cmd/wireproxy
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o AWGProxy_amd64 -v ./cmd/awgproxy
           mkdir release_darwin_amd64
-          mv WireProxy_amd64 wireproxy
-          cp wireproxy release_darwin_amd64/wireproxy
+          mv AWGProxy_amd64 awgproxy
+          cp awgproxy release_darwin_amd64/awgproxy
       - name: Upload Darwin amd64 Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_darwin_amd64
+          name: AWGProxy_darwin_amd64
           path: release_darwin_amd64
   darwinArm64Build:
     name: Build Darwin arm64 Version
@@ -137,15 +137,15 @@ jobs:
       - name: Setting up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.24.3"
       - name: Building Darwin arm64 Version
         run: |
-          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o WireProxy_arm64 -v ./cmd/wireproxy
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o AWGProxy_arm64 -v ./cmd/awgproxy
           mkdir release_darwin_arm64
-          mv WireProxy_arm64 wireproxy
-          cp wireproxy release_darwin_arm64/wireproxy
+          mv AWGProxy_arm64 awgproxy
+          cp awgproxy release_darwin_arm64/awgproxy
       - name: Upload Darwin arm64 Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_darwin_arm64
+          name: AWGProxy_darwin_arm64
           path: release_darwin_arm64

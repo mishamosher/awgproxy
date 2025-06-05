@@ -32,4 +32,4 @@ The provided systemd unit assumes you have the awgproxy executable installed on 
 
 # Additional notes
 
-If you want to disable the extensive logging that's done by awgproxy, simply add `-s` parameter to `ExecStart=`. This will enable the silent mode that was implemented with [pull/67](https://github.com/pufferffish/wireproxy/pull/67).
+If you want to disable the extensive logging that's done by awgproxy, simply add `-s` parameter to `ExecStart=`. This will enable the silent mode that was implemented with [pull/67](https://github.com/whyvl/wireproxy/pull/67).
