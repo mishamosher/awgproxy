@@ -1,5 +1,5 @@
 # Start by building the application.
-FROM docker.io/golang:1.24.3 as build
+FROM docker.io/golang:1.24.3 AS build
 
 WORKDIR /usr/src/awgproxy
 COPY . .

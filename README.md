@@ -1,8 +1,8 @@
 # awgproxy
 
 [![ISC licensed](https://img.shields.io/badge/license-ISC-blue)](./LICENSE)
-[![Build status](https://github.com/octeep/awgproxy/actions/workflows/build.yml/badge.svg)](https://github.com/octeep/awgproxy/actions)
-[![Documentation](https://img.shields.io/badge/godoc-awgproxy-blue)](https://pkg.go.dev/github.com/octeep/awgproxy)
+[![Build status](https://github.com/mishamosher/awgproxy/actions/workflows/build.yml/badge.svg)](https://github.com/mishamosher/awgproxy/actions)
+[![Documentation](https://img.shields.io/badge/godoc-awgproxy-blue)](https://pkg.go.dev/github.com/mishamosher/awgproxy)
 
 A wireguard client that exposes itself as a socks5/http proxy or tunnels.
 
@@ -72,7 +72,7 @@ Arguments:
 # Build instruction
 
 ```bash
-git clone https://github.com/octeep/awgproxy
+git clone https://github.com/mishamosher/awgproxy
 cd awgproxy
 make
 ```
@@ -80,7 +80,7 @@ make
 # Install
 
 ```bash
-go install github.com/pufferffish/awgproxy/cmd/awgproxy@v1.0.9 # or @latest
+go install github.com/mishamosher/awgproxy/cmd/awgproxy@v1.0.9-4 # or @latest
 ```
 
 # Use with VPN

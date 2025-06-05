@@ -8,7 +8,7 @@ The provided systemd unit assumes you have the awgproxy executable installed on 
 
 1. Copy the `awgproxy.service` file from this directory to `/etc/systemd/system/`, or use the following cURL command to download it:
    ```bash
-   curl https://raw.githubusercontent.com/pufferffish/awgproxy/master/systemd/awgproxy.service | sudo tee /etc/systemd/system/awgproxy.service
+   curl https://raw.githubusercontent.com/mishamosher/awgproxy/master/systemd/awgproxy.service | sudo tee /etc/systemd/system/awgproxy.service
    ```
 
 2. If necessary, customize the unit.
