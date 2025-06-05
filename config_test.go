@@ -1,4 +1,4 @@
-package wireproxy
+package awgproxy
 
 import (
 	"github.com/go-ini/ini"

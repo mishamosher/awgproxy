@@ -1,4 +1,4 @@
-package wireproxy
+package awgproxy
 
 import (
 	"encoding/base64"
@@ -31,6 +31,15 @@ type DeviceConfig struct {
 	ListenPort         *int
 	CheckAlive         []netip.Addr
 	CheckAliveInterval int
+	Jc                 int
+	Jmin               int
+	Jmax               int
+	S1                 int
+	S2                 int
+	H1                 uint32
+	H2                 uint32
+	H3                 uint32
+	H4                 uint32
 }
 
 type TCPClientTunnelConfig struct {
@@ -175,7 +184,7 @@ func parseCIDRNetIP(section *ini.Section, keyName string) ([]netip.Addr, error) 
 		if len(str) == 0 {
 			continue
 		}
-    
+
 		if addr, err := netip.ParseAddr(str); err == nil {
 			ips = append(ips, addr)
 		} else {
@@ -183,7 +192,7 @@ func parseCIDRNetIP(section *ini.Section, keyName string) ([]netip.Addr, error) 
 			if err != nil {
 				return nil, err
 			}
-      
+
 			addr := prefix.Addr()
 			ips = append(ips, addr)
 		}
@@ -234,6 +243,34 @@ func resolveIPPAndPort(addr string) (string, error) {
 	return net.JoinHostPort(ip.String(), port), nil
 }
 
+func ParseIntFromSection(device *DeviceConfig, section *ini.Section, keyName string) (int, error) {
+	sectionKey, err := section.GetKey(keyName)
+	if err != nil {
+		return 0, err
+	}
+
+	value, err := sectionKey.Int()
+	if err != nil {
+		return 0, err
+	}
+
+	return value, nil
+}
+
+func ParseUintFromSection(device *DeviceConfig, section *ini.Section, keyName string) (uint32, error) {
+	sectionKey, err := section.GetKey(keyName)
+	if err != nil {
+		return 0, err
+	}
+
+	value, err := sectionKey.Uint()
+	if err != nil {
+		return 0, err
+	}
+
+	return uint32(value), nil
+}
+
 // ParseInterface parses the [Interface] section and extract the information into `device`
 func ParseInterface(cfg *ini.File, device *DeviceConfig) error {
 	sections, err := cfg.SectionsByName("Interface")
@@ -276,6 +313,60 @@ func ParseInterface(cfg *ini.File, device *DeviceConfig) error {
 		}
 		device.ListenPort = &value
 	}
+
+	junkPacketCount, err := ParseIntFromSection(device, section, "Jc")
+	if err != nil {
+		return err
+	}
+	device.Jc = junkPacketCount
+
+	junkPacketMinSize, err := ParseIntFromSection(device, section, "Jmin")
+	if err != nil {
+		return err
+	}
+	device.Jmin = junkPacketMinSize
+
+	junkPacketMaxSize, err := ParseIntFromSection(device, section, "Jmax")
+	if err != nil {
+		return err
+	}
+	device.Jmax = junkPacketMaxSize
+
+	initPacketJunkSize, err := ParseIntFromSection(device, section, "S1")
+	if err != nil {
+		return err
+	}
+	device.S1 = initPacketJunkSize
+
+	responsePacketJunkSize, err := ParseIntFromSection(device, section, "S2")
+	if err != nil {
+		return err
+	}
+	device.S2 = responsePacketJunkSize
+
+	initPacketMagicHeader, err := ParseUintFromSection(device, section, "H1")
+	if err != nil {
+		return err
+	}
+	device.H1 = initPacketMagicHeader
+
+	responsePacketMagicHeader, err := ParseUintFromSection(device, section, "H2")
+	if err != nil {
+		return err
+	}
+	device.H2 = responsePacketMagicHeader
+
+	underloadPacketMagicHeader, err := ParseUintFromSection(device, section, "H3")
+	if err != nil {
+		return err
+	}
+	device.H3 = underloadPacketMagicHeader
+
+	transportPacketMagicHeader, err := ParseUintFromSection(device, section, "H4")
+	if err != nil {
+		return err
+	}
+	device.H4 = transportPacketMagicHeader
 
 	checkAlive, err := parseNetIP(section, "CheckAlive")
 	if err != nil {

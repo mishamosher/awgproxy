@@ -1,4 +1,4 @@
-package wireproxy
+package awgproxy
 
 import (
 	"bytes"
@@ -8,9 +8,9 @@ import (
 	"net/netip"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"golang.zx2c4.com/wireguard/conn"
-	"golang.zx2c4.com/wireguard/device"
-	"golang.zx2c4.com/wireguard/tun/netstack"
+	"github.com/amnezia-vpn/amneziawg-go/conn"
+	"github.com/amnezia-vpn/amneziawg-go/device"
+	"github.com/amnezia-vpn/amneziawg-go/tun/netstack"
 )
 
 // DeviceSetting contains the parameters for setting up a tun interface
@@ -30,6 +30,16 @@ func CreateIPCRequest(conf *DeviceConfig) (*DeviceSetting, error) {
 	if conf.ListenPort != nil {
 		request.WriteString(fmt.Sprintf("listen_port=%d\n", *conf.ListenPort))
 	}
+
+	request.WriteString(fmt.Sprintf("jc=%d\n", conf.Jc))
+	request.WriteString(fmt.Sprintf("jmin=%d\n", conf.Jmin))
+	request.WriteString(fmt.Sprintf("jmax=%d\n", conf.Jmax))
+	request.WriteString(fmt.Sprintf("s1=%d\n", conf.S1))
+	request.WriteString(fmt.Sprintf("s2=%d\n", conf.S2))
+	request.WriteString(fmt.Sprintf("h1=%d\n", conf.H1))
+	request.WriteString(fmt.Sprintf("h2=%d\n", conf.H2))
+	request.WriteString(fmt.Sprintf("h3=%d\n", conf.H3))
+	request.WriteString(fmt.Sprintf("h4=%d\n", conf.H4))
 
 	for _, peer := range conf.Peers {
 		request.WriteString(fmt.Sprintf(heredoc.Doc(`

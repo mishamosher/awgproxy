@@ -1,6 +1,6 @@
 // will delete when upgrading to go 1.18
 
-package wireproxy
+package awgproxy
 
 import (
 	"net"

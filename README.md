@@ -1,14 +1,14 @@
-# wireproxy
+# awgproxy
 
 [![ISC licensed](https://img.shields.io/badge/license-ISC-blue)](./LICENSE)
-[![Build status](https://github.com/octeep/wireproxy/actions/workflows/build.yml/badge.svg)](https://github.com/octeep/wireproxy/actions)
-[![Documentation](https://img.shields.io/badge/godoc-wireproxy-blue)](https://pkg.go.dev/github.com/octeep/wireproxy)
+[![Build status](https://github.com/octeep/awgproxy/actions/workflows/build.yml/badge.svg)](https://github.com/octeep/awgproxy/actions)
+[![Documentation](https://img.shields.io/badge/godoc-awgproxy-blue)](https://pkg.go.dev/github.com/octeep/awgproxy)
 
 A wireguard client that exposes itself as a socks5/http proxy or tunnels.
 
 # What is this
 
-`wireproxy` is a completely userspace application that connects to a wireguard peer,
+`awgproxy` is a completely userspace application that connects to a wireguard peer,
 and exposes a socks5/http proxy or tunnels on the machine. This can be useful if you need
 to connect to certain sites via a wireguard peer, but can't be bothered to setup a new network
 interface for whatever reasons.
@@ -18,13 +18,13 @@ interface for whatever reasons.
 - You simply want to use wireguard as a way to proxy some traffic.
 - You don't want root permission just to change wireguard settings.
 
-Currently, I'm running wireproxy connected to a wireguard server in another country,
-and configured my browser to use wireproxy for certain sites. It's pretty useful since
-wireproxy is completely isolated from my network interfaces, and I don't need root to configure
+Currently, I'm running awgproxy connected to a wireguard server in another country,
+and configured my browser to use awgproxy for certain sites. It's pretty useful since
+awgproxy is completely isolated from my network interfaces, and I don't need root to configure
 anything.
 
-Users who want something similar but for Amnezia VPN can use [this fork](https://github.com/artem-russkikh/wireproxy-awg)
-of wireproxy by [@artem-russkikh](https://github.com/artem-russkikh).
+Users who want something similar but for Amnezia VPN can use [this fork](https://github.com/artem-russkikh/awgproxy-awg)
+of awgproxy by [@artem-russkikh](https://github.com/artem-russkikh).
 
 # Sponsor
 
@@ -46,11 +46,11 @@ with a discount using [this referral link](https://iproyal.com/?r=795836)! 🚀
 # Usage
 
 ```bash
-./wireproxy [-c path to config]
+./awgproxy [-c path to config]
 ```
 
 ```bash
-usage: wireproxy [-h|--help] [-c|--config "<value>"] [-s|--silent]
+usage: awgproxy [-h|--help] [-c|--config "<value>"] [-s|--silent]
                  [-d|--daemon] [-i|--info "<value>"] [-v|--version]
                  [-n|--configtest]
 
@@ -60,9 +60,9 @@ Arguments:
 
   -h  --help        Print help information
   -c  --config      Path of configuration file
-                    Default paths: /etc/wireproxy/wireproxy.conf, $HOME/.config/wireproxy.conf
+                    Default paths: /etc/awgproxy/awgproxy.conf, $HOME/.config/awgproxy.conf
   -s  --silent      Silent mode
-  -d  --daemon      Make wireproxy run in background
+  -d  --daemon      Make awgproxy run in background
   -i  --info        Specify the address and port for exposing health status
   -v  --version     Print version
   -n  --configtest  Configtest mode. Only check the configuration file for
@@ -72,20 +72,20 @@ Arguments:
 # Build instruction
 
 ```bash
-git clone https://github.com/octeep/wireproxy
-cd wireproxy
+git clone https://github.com/octeep/awgproxy
+cd awgproxy
 make
 ```
 
 # Install
 
 ```bash
-go install github.com/pufferffish/wireproxy/cmd/wireproxy@v1.0.9 # or @latest
+go install github.com/pufferffish/awgproxy/cmd/awgproxy@v1.0.9 # or @latest
 ```
 
 # Use with VPN
 
-Instructions for using wireproxy with Firefox container tabs and auto-start on MacOS can be found [here](/UseWithVPN.md).
+Instructions for using awgproxy with Firefox container tabs and auto-start on MacOS can be found [here](/UseWithVPN.md).
 
 # Sample config file
 
@@ -123,11 +123,11 @@ Target = play.cubecraft.net:25565
 ListenPort = 3422
 Target = localhost:25545
 
-# STDIOTunnel is a tunnel connecting the standard input and output of the wireproxy
+# STDIOTunnel is a tunnel connecting the standard input and output of the awgproxy
 # process to the specified TCP target via wireguard.
-# This is especially useful to use wireproxy as a ProxyCommand parameter in openssh
+# This is especially useful to use awgproxy as a ProxyCommand parameter in openssh
 # For example:
-#    ssh -o ProxyCommand='wireproxy -c myconfig.conf' ssh.myserver.net
+#    ssh -o ProxyCommand='awgproxy -c myconfig.conf' ssh.myserver.net
 # Flow:
 # Piped command -->(wireguard)--> ssh.myserver.net:22
 [STDIOTunnel]
@@ -155,7 +155,7 @@ BindAddress = 127.0.0.1:25345
 ```
 
 Alternatively, if you already have a wireguard config, you can import it in the
-wireproxy config file like this:
+awgproxy config file like this:
 
 ```ini
 WGConfig = <path to the wireguard config>
@@ -172,7 +172,7 @@ WGConfig = <path to the wireguard config>
 ```
 
 Having multiple peers is also supported. `AllowedIPs` would need to be specified
-such that wireproxy would know which peer to forward to.
+such that awgproxy would know which peer to forward to.
 
 ```ini
 [Interface]
@@ -205,7 +205,7 @@ ListenPort = 5080
 Target = service-three.servicenet:80
 ```
 
-Wireproxy can also allow peers to connect to it:
+awgproxy can also allow peers to connect to it:
 
 ```ini
 [Interface]
@@ -220,7 +220,7 @@ AllowedIPs = 10.254.254.100/32
 
 # Health endpoint
 
-Wireproxy supports exposing a health endpoint for monitoring purposes.
+awgproxy supports exposing a health endpoint for monitoring purposes.
 The argument `--info/-i` specifies an address and port (e.g. `localhost:9080`), which exposes a HTTP server that provides health status metric of the server.
 
 Currently two endpoints are implemented:
@@ -283,7 +283,3 @@ CheckAlive = 1.1.1.1
 If nothing is set for `CheckAlive`, an empty JSON object with 200 will be the response.
 
 The peer which the ICMP ping packet is routed to depends on the `AllowedIPs` set for each peers.
-
-# Stargazers over time
-
-[![Stargazers over time](https://starchart.cc/octeep/wireproxy.svg)](https://starchart.cc/octeep/wireproxy)

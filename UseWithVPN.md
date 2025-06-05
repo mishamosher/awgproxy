@@ -55,7 +55,7 @@ from e.g. protonvpn.
 
 ```bash
 #!/bin/bash
-/Users/jonny/wireproxy/wireproxy -c /Users/jonny/vpntabs/ProtonUS.adblock.conf
+/Users/jonny/awgproxy/awgproxy -c /Users/jonny/vpntabs/ProtonUS.adblock.conf
 ```
 
 ## MacOS LaunchAgent
