@@ -1,10 +1,9 @@
-# Getting a Wireguard Server
+# Getting a wireguard/amnezia/euphoria Server
 
-You can create your own wireguard server using a host service like DigitalOcean,
-or you can get a VPN service that provides WireGuard configs.
+You can create your own wireguard/amnezia/euphoria server using a host service like DigitalOcean,
+or you can get a VPN service that provides wireguard/amnezia/euphoria configs.
 
-I recommend ProtonVPN, because it is highly secure and has a great WireGuard
-config generator.
+ProtonVPN can be used, it has a functional WireGuard config generator.
 
 Simply go to <https://account.protonvpn.com/downloads> and scroll down to the
 wireguard section to generate your configs, then paste into the appropriate
@@ -16,10 +15,10 @@ Create a folder for your configs and startup scripts. Can be the same place as
 this code. That path you will use below. For reference this text uses
 `/Users/jonny/vpntabs`
 
-For each VPN you want to run, you will download your wireguard config and name
-it appropriately (e.g. `ProtonUS.adblock.server.conf`) and then create two new
-files from those below with similar names (e.g. `ProtonUS.adblock.conf` and
-`ProtonUS.adblock.sh`)
+For each VPN you want to run, you will download/generate your
+wireguard/amnezia/euphoria config and name it appropriately (e.g.
+`ProtonUS.adblock.server.conf`) and then create two new files from those below
+with similar names (e.g. `ProtonUS.adblock.conf` and `ProtonUS.adblock.sh`)
 
 You will also create a launch script, the reference below is only for macOS. The
 naming should also be similar (e.g.
@@ -58,7 +57,7 @@ from e.g. protonvpn.
 /Users/jonny/awgproxy/awgproxy -c /Users/jonny/vpntabs/ProtonUS.adblock.conf
 ```
 
-## MacOS LaunchAgent
+## macOS LaunchAgent
 
 To make it run every time you start your computer, you can create a launch agent
 in `$HOME/Library/LaunchAgents`. Name reference above.
@@ -89,8 +88,8 @@ To enable it, run
 
 # Firefox Setup
 
-You will need to enable the Multi Account Container Tabs extension and a proxy extension, I
-recommend Sideberry, but Container Proxy also works.
+You will need to enable the Multi Account Container Tabs extension and a proxy extension,
+you can use Sideberry, Container Proxy, or something else.
 
 Create a container to be dedicated to this VPN, and then add the IP, port,
 username, and password from above.

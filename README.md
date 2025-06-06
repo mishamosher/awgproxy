@@ -4,34 +4,26 @@
 [![Build status](https://github.com/mishamosher/awgproxy/actions/workflows/build.yml/badge.svg)](https://github.com/mishamosher/awgproxy/actions)
 [![Documentation](https://img.shields.io/badge/godoc-awgproxy-blue)](https://pkg.go.dev/github.com/mishamosher/awgproxy)
 
-A wireguard client that exposes itself as a socks5/http proxy or tunnels.
+A wireguard+amnezia/euphoria client that exposes itself as a socks5/http proxy or tunnels.
 
 # What is this
 
-`awgproxy` is a completely userspace application that connects to a wireguard peer,
+`awgproxy` is a completely userspace application that connects to a wireguard/amnezia/euphoria peer,
 and exposes a socks5/http proxy or tunnels on the machine. This can be useful if you need
-to connect to certain sites via a wireguard peer, but can't be bothered to setup a new network
-interface for whatever reasons.
+to connect to certain sites via a wireguard/amnezia/euphoria peer, but can't be bothered to setup a new network
+interface for whatever reason.
+
+More info on supported peers/protocols:
+- https://github.com/WireGuard/wireguard-go
+- https://github.com/amnezia-vpn/amneziawg-go
+- https://github.com/amnezia-vpn/euphoria
 
 # Why you might want this
 
-- You simply want to use wireguard as a way to proxy some traffic.
-- You don't want root permission just to change wireguard settings.
+- You simply want to use awgproxy as a way to proxy some traffic.
+- You don't want root permission just to change awgproxy settings.
 
-Currently, I'm running awgproxy connected to a wireguard server in another country,
-and configured my browser to use awgproxy for certain sites. It's pretty useful since
-awgproxy is completely isolated from my network interfaces, and I don't need root to configure
-anything.
-
-Users who want something similar but for Amnezia VPN can use [this fork](https://github.com/artem-russkikh/awgproxy-awg)
-of awgproxy by [@artem-russkikh](https://github.com/artem-russkikh).
-
-# Sponsor
-
-This project is supported by [IPRoyal](https://iproyal.com/?r=795836). You can get premium quality proxies at unbeatable prices
-with a discount using [this referral link](https://iproyal.com/?r=795836)! 🚀
-
-![IPRoyal](/assets/iproyal.png)
+Users who want something similar but without amnezia/euphoria support can use the original [wireproxy](https://github.com/whyvl/wireproxy) by [@whyvl](https://github.com/whyvl).
 
 # Feature
 
@@ -40,7 +32,11 @@ with a discount using [this referral link](https://iproyal.com/?r=795836)! 🚀
 
 # TODO
 
-- UDP Support in SOCKS5
+- UDP Support in SOCKS5 (currently experimental). For more info, please read:
+  - https://github.com/whyvl/wireproxy/issues/30
+  - https://github.com/things-go/go-socks5/pull/63
+  - https://github.com/things-go/go-socks5/pull/65
+  - Current implementation in this repo: https://github.com/ge9/go-socks5/commit/43e95d04ce4e10595a8b8395f0c9b793a906130d
 - UDP static routing
 
 # Usage
@@ -69,13 +65,15 @@ Arguments:
                     validity.
 ```
 
-# Build instruction
+# Build instructions
 
 ```bash
 git clone https://github.com/mishamosher/awgproxy
 cd awgproxy
 make
 ```
+
+Please read the [Build Action](/.github/workflows/build.yml) for cross-compile examples.
 
 # Install
 
@@ -85,7 +83,7 @@ go install github.com/mishamosher/awgproxy/cmd/awgproxy@v1.0.9-4 # or @latest
 
 # Use with VPN
 
-Instructions for using awgproxy with Firefox container tabs and auto-start on MacOS can be found [here](/UseWithVPN.md).
+Instructions for using awgproxy with Firefox container tabs and auto-start on macOS can be found [here](/UseWithVPN.md).
 
 # Sample config file
 
