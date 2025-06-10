@@ -10,12 +10,13 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"runtime"
 	"strconv"
 	"syscall"
 
 	"github.com/akamensky/argparse"
-	"github.com/mishamosher/awgproxy"
 	"github.com/amnezia-vpn/amneziawg-go/device"
+	"github.com/mishamosher/awgproxy"
 	"suah.dev/protect"
 )
 
@@ -68,6 +69,11 @@ func configFilePath() (string, bool) {
 }
 
 func lock(stage string) {
+	// Do not use sandbox-related operations on Android
+	if runtime.GOOS == "android" {
+		return
+	}
+
 	switch stage {
 	case "boot":
 		exePath := executablePath()
@@ -131,6 +137,11 @@ func extractPort(addr string) uint16 {
 }
 
 func lockNetwork(sections []awgproxy.RoutineSpawner, infoAddr *string) {
+	// Do not use sandbox-related operations on Android
+	if runtime.GOOS == "android" {
+		return
+	}
+
 	var rules []landlock.Rule
 	if infoAddr != nil && *infoAddr != "" {
 		rules = append(rules, landlock.BindTCP(extractPort(*infoAddr)))
