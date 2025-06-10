@@ -1,45 +1,72 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
 project_name: Build awgproxy
 before:
   hooks:
-    - go mod tidy -v
+    - ./awgproxy-prepare-cross-compile.sh
 builds:
-  - env:
+  - id: "desktop"
+    env:
       - CGO_ENABLED=0
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.arch={{.Arch}}
     goos:
+      - darwin
       - linux
       - windows
-      - darwin
     goarch:
-      - arm
-      - arm64
       - 386
       - amd64
+      - arm
+      - arm64
       - mips
       - mipsle
-      - s390x
+      - ppc64le
       - riscv64
+      - s390x
     gomips:
       - softfloat
+      - hardfloat
     ignore:
       - goos: windows
         goarch: arm
-      - goos: windows
-        goarch: arm64
+    main: ./cmd/awgproxy/
+    binary: awgproxy
+  - id: "mobile"
+    env:
+      - CGO_ENABLED=1
+      - >-
+        {{- if eq .Arch "386"}}CC={{ abs "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang" }}{{- end }}
+        {{- if eq .Arch "amd64"}}CC={{ abs "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang" }}{{- end }}
+        {{- if eq .Arch "arm"}}CC={{ abs "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang" }}{{- end }}
+        {{- if eq .Arch "arm64"}}CC={{ abs "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang" }}{{- end }}
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.arch={{.Arch}}
+    goos:
+      - android
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
     main: ./cmd/awgproxy/
     binary: awgproxy
 universal_binaries:
-  - name_template: "awgproxy"
+  - ids:
+      - desktop
+    name_template: "awgproxy"
     replace: false
 checksum:
   name_template: "checksums.txt"
 snapshot:
-  name_template: "awgproxy"
+  version_template: "awgproxy"
 archives:
-  - name_template: "awgproxy_{{ .Os }}_{{ .Arch }}"
+  - name_template: "awgproxy_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 \"v1\") }}{{ .Amd64 }}{{ end }}"
     files:
       - none*
+    format_overrides:
+      - goos: windows
+        formats: [ "zip" ]
 changelog:
   sort: asc
   filters:

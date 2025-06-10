@@ -18,13 +18,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Git clone AWGProxy
         run: |
-          git clone https://github.com/mishamosher/awgproxy.git ${{ env.workdir }}
+          git clone https://github.com/mishamosher/awgproxy.git --branch ${GITHUB_REF_NAME} --single-branch ${{ env.workdir }}
           cp ./.github/awgproxy-releaser.yml ${{ env.workdir }}/.goreleaser.yml
 
       - name: Set up GoReleaser
@@ -33,19 +33,11 @@ jobs:
           go-version: "1.24.4"
 
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser
           workdir: ${{ env.workdir }}
           version: latest
           args: release --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Release binaries
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: awgproxy
-          files: ${{ env.workdir }}/dist/*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
