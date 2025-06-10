@@ -26,7 +26,8 @@ jobs:
           mkdir android_ndk
           wget --no-verbose ${ANDROID_NDK_URL} -O android_ndk/ndk.zip
           unzip android_ndk/ndk.zip -d android_ndk
-          CGO_ENABLED=1 GOOS=android GOARCH=386 CC="$(realpath "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang")" go build -o AWGProxy_386 -v ./cmd/awgproxy
+          mv "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)" android_ndk/extracted
+          CGO_ENABLED=1 GOOS=android GOARCH=386 CC="$(realpath "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang")" go build -o AWGProxy_386 -v ./cmd/awgproxy
           mkdir release_android_386
           mv AWGProxy_386 awgproxy
           cp awgproxy release_android_386/awgproxy
@@ -49,7 +50,8 @@ jobs:
           mkdir android_ndk
           wget --no-verbose ${ANDROID_NDK_URL} -O android_ndk/ndk.zip
           unzip android_ndk/ndk.zip -d android_ndk
-          CGO_ENABLED=1 GOOS=android GOARCH=amd64 CC="$(realpath "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang")" go build -o AWGProxy_amd64 -v ./cmd/awgproxy
+          mv "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)" android_ndk/extracted
+          CGO_ENABLED=1 GOOS=android GOARCH=amd64 CC="$(realpath "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang")" go build -o AWGProxy_amd64 -v ./cmd/awgproxy
           mkdir release_android_amd64
           mv AWGProxy_amd64 awgproxy
           cp awgproxy release_android_amd64/awgproxy
@@ -72,7 +74,8 @@ jobs:
           mkdir android_ndk
           wget --no-verbose ${ANDROID_NDK_URL} -O android_ndk/ndk.zip
           unzip android_ndk/ndk.zip -d android_ndk
-          CGO_ENABLED=1 GOOS=android GOARCH=arm CC="$(realpath "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang")" go build -o AWGProxy_arm -v ./cmd/awgproxy
+          mv "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)" android_ndk/extracted
+          CGO_ENABLED=1 GOOS=android GOARCH=arm CC="$(realpath "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang")" go build -o AWGProxy_arm -v ./cmd/awgproxy
           mkdir release_android_arm
           mv AWGProxy_arm awgproxy
           cp awgproxy release_android_arm/awgproxy
@@ -95,7 +98,8 @@ jobs:
           mkdir android_ndk
           wget --no-verbose ${ANDROID_NDK_URL} -O android_ndk/ndk.zip
           unzip android_ndk/ndk.zip -d android_ndk
-          CGO_ENABLED=1 GOOS=android GOARCH=arm64 CC="$(realpath "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang")" go build -o AWGProxy_arm64 -v ./cmd/awgproxy
+          mv "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)" android_ndk/extracted
+          CGO_ENABLED=1 GOOS=android GOARCH=arm64 CC="$(realpath "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang")" go build -o AWGProxy_arm64 -v ./cmd/awgproxy
           mkdir release_android_arm64
           mv AWGProxy_arm64 awgproxy
           cp awgproxy release_android_arm64/awgproxy
