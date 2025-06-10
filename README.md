@@ -78,7 +78,7 @@ Please read the [Build Action](/.github/workflows/build.yml) for cross-compile e
 # Install
 
 ```bash
-go install github.com/mishamosher/awgproxy/cmd/awgproxy@v1.0.9-4 # or @latest
+go install github.com/mishamosher/awgproxy/cmd/awgproxy@latest # or @v[tag]
 ```
 
 # Use with VPN
