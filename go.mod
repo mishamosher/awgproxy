@@ -1,6 +1,6 @@
 module github.com/mishamosher/awgproxy
 
-go 1.24.3
+go 1.24.4
 
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
