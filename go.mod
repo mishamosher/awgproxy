@@ -5,7 +5,7 @@ go 1.24.4
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/akamensky/argparse v1.4.0
-	github.com/amnezia-vpn/amneziawg-go v0.2.12
+	github.com/amnezia-vpn/amneziawg-go v0.2.13
 	github.com/go-ini/ini v1.67.0
 	github.com/landlock-lsm/go-landlock v0.0.0-20250303204525-1544bccde3a3
 	github.com/things-go/go-socks5 v0.0.6
@@ -15,7 +15,8 @@ require (
 
 require (
 	github.com/google/btree v1.1.3 // indirect
-	github.com/tevino/abool/v2 v2.1.0 // indirect
+	github.com/tevino/abool v1.2.0 // indirect
+	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.39.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
@@ -23,7 +24,5 @@ require (
 	gvisor.dev/gvisor v0.0.0-20250606001031-fa4c4dd86b43 // indirect
 	kernel.org/pub/linux/libs/security/libcap/psx v1.2.76 // indirect
 )
-
-replace github.com/amnezia-vpn/amneziawg-go => github.com/mishamosher/amneziawg-go v0.2.12-1
 
 replace github.com/things-go/go-socks5 => github.com/mishamosher/go-socks5 v0.0.6-1
