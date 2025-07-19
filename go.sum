@@ -2,7 +2,7 @@ github.com/MakeNowJust/heredoc/v2 v2.0.1 h1:rlCHh70XXXv7toz95ajQWOWQnN4WNLt0TdpZ
 github.com/MakeNowJust/heredoc/v2 v2.0.1/go.mod h1:6/2Abh5s+hc3g9nbWLe9ObDIOhaRrqsyY9MWy+4JdRM=
 github.com/akamensky/argparse v1.4.0 h1:YGzvsTqCvbEZhL8zZu2AiA5nq805NZh75JNj4ajn1xc=
 github.com/akamensky/argparse v1.4.0/go.mod h1:S5kwC7IuDcEr5VeXtGPRVZ5o/FdhcMlQz4IZQuw64xA=
-github.com/amnezia-vpn/amneziawg-go v0.2.13 h1:sq0xJOXai/nD4Ak5knBiSyCxtaG9Tp+5kZ9e+hjP+EQ=
+github.com/amnezia-vpn/amneziawg-go v0.2.13 h1:xFxCumnmtYTOMeg14MPG53p9RpmvSnjrDEB1bFma79A=
 github.com/amnezia-vpn/amneziawg-go v0.2.13/go.mod h1:TB75yoG4yP6nVcJY3CPWstDcgOtlouC4xWyE7U9XqzU=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
