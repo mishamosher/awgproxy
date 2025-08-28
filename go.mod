@@ -24,5 +24,3 @@ require (
 	gvisor.dev/gvisor v0.0.0-20250718015824-35000683b6d7 // indirect
 	kernel.org/pub/linux/libs/security/libcap/psx v1.2.76 // indirect
 )
-
-replace github.com/things-go/go-socks5 => github.com/mishamosher/go-socks5 v0.0.6-1
