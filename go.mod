@@ -5,7 +5,7 @@ go 1.24.6
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/akamensky/argparse v1.4.0
-	github.com/amnezia-vpn/amneziawg-go v0.2.13
+	github.com/amnezia-vpn/amneziawg-go v0.2.16
 	github.com/go-ini/ini v1.67.0
 	github.com/landlock-lsm/go-landlock v0.0.0-20250303204525-1544bccde3a3
 	github.com/things-go/go-socks5 v0.1.0
