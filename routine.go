@@ -8,10 +8,6 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
-	"github.com/amnezia-vpn/amneziawg-go/device"
-	"golang.org/x/net/icmp"
-	"golang.org/x/net/ipv4"
-	"golang.org/x/net/ipv6"
 	"io"
 	"log"
 	"math/rand"
@@ -23,6 +19,11 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/amnezia-vpn/amneziawg-go/device"
+	"golang.org/x/net/icmp"
+	"golang.org/x/net/ipv4"
+	"golang.org/x/net/ipv6"
 
 	"github.com/things-go/go-socks5"
 	"github.com/things-go/go-socks5/bufferpool"
@@ -189,8 +190,10 @@ func (c CredentialValidator) Valid(username, password string) bool {
 
 // connForward copy data from `from` to `to`
 func connForward(from io.ReadWriteCloser, to io.ReadWriteCloser) {
-	defer from.Close()
-	defer to.Close()
+	defer func(from io.ReadWriteCloser, to io.ReadWriteCloser) {
+		_ = from.Close()
+		_ = to.Close()
+	}(from, to)
 
 	_, err := io.Copy(to, from)
 	if err != nil {
@@ -450,7 +453,9 @@ func (d VirtualTun) pingIPs() {
 			d.PingRecord[addr.String()] = uint64(time.Now().Unix())
 			d.PingRecordLock.Unlock()
 
-			defer socket.Close()
+			defer func(socket net.Conn) {
+				_ = socket.Close()
+			}(socket)
 		}()
 	}
 }
