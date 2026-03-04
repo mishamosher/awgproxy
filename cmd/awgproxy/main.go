@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/landlock-lsm/go-landlock/landlock"
 	"log"
 	"net"
 	"net/http"
@@ -13,6 +12,8 @@ import (
 	"runtime"
 	"strconv"
 	"syscall"
+
+	"github.com/landlock-lsm/go-landlock/landlock"
 
 	"github.com/akamensky/argparse"
 	"github.com/amnezia-vpn/amneziawg-go/device"
@@ -29,7 +30,7 @@ var default_config_paths = []string{
 	os.Getenv("HOME") + "/.config/awgproxy.conf",
 }
 
-var version = "1.0.9-9-dev"
+var version = "1.0.9-10-dev"
 
 func panicIfError(err error) {
 	if err != nil {
