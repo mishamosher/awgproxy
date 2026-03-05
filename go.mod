@@ -1,4 +1,4 @@
-module github.com/pufferffish/wireproxy
+module github.com/windtf/wireproxy
 
 go 1.26.0
 

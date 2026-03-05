@@ -80,7 +80,7 @@ make
 # Install
 
 ```bash
-go install github.com/pufferffish/wireproxy/cmd/wireproxy@v1.0.9 # or @latest
+go install github.com/windtf/wireproxy/cmd/wireproxy@v1.0.9 # or @latest
 ```
 
 # Use with VPN
