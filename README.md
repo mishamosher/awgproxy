@@ -207,6 +207,18 @@ Target = service-two.servicenet:5001
 [TCPServerTunnel]
 ListenPort = 5080
 Target = service-three.servicenet:80
+
+[UDPProxyTunnel]
+BindAddress = 127.0.0.1:53
+Target = 1.1.1.1:53
+InactivityTimeout = 30 # If its set to 0, it will never timeout
+
+[Resolve]
+# Set DNS Resovle Strategy
+# `ipv4`: Prioritize A records.
+# `ipv6`: Prioritize AAAA records       .
+# `auto` (Default): If the WireGuard interface has IPv4 address only, it's equivalent to `ipv4`, otherwise it's equivalent to `ipv6`.
+ResolveStrategy = auto 
 ```
 
 Wireproxy can also allow peers to connect to it:
