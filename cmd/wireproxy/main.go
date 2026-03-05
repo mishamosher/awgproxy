@@ -80,6 +80,7 @@ func lock(stage string) {
 		// Linux
 		panicIfError(landlock.V1.BestEffort().RestrictPaths(
 			landlock.RODirs("/"),
+			landlock.RWFiles("/dev/null").IgnoreIfMissing(),
 		))
 	case "boot-daemon":
 	case "read-config":
