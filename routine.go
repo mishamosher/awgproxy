@@ -210,8 +210,8 @@ func (c CredentialValidator) Valid(username, password string) bool {
 
 // connForward copy data from `from` to `to`
 func connForward(from io.ReadWriteCloser, to io.ReadWriteCloser) {
-	defer from.Close()
-	defer to.Close()
+	defer func() { _ = from.Close() }()
+	defer func() { _ = to.Close() }()
 
 	_, err := io.Copy(to, from)
 	if err != nil {
@@ -464,7 +464,7 @@ func (d VirtualTun) pingIPs() {
 			d.PingRecord[addr.String()] = uint64(time.Now().Unix())
 			d.PingRecordLock.Unlock()
 
-			defer socket.Close()
+			defer func() { _ = socket.Close() }()
 		}()
 	}
 }

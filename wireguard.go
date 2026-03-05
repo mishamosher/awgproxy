@@ -25,27 +25,27 @@ type DeviceSetting struct {
 func CreateIPCRequest(conf *DeviceConfig) (*DeviceSetting, error) {
 	var request bytes.Buffer
 
-	request.WriteString(fmt.Sprintf("private_key=%s\n", conf.SecretKey))
+	fmt.Fprintf(&request, "private_key=%s\n", conf.SecretKey)
 
 	if conf.ListenPort != nil {
-		request.WriteString(fmt.Sprintf("listen_port=%d\n", *conf.ListenPort))
+		fmt.Fprintf(&request, "listen_port=%d\n", *conf.ListenPort)
 	}
 
 	for _, peer := range conf.Peers {
-		request.WriteString(fmt.Sprintf(heredoc.Doc(`
+		fmt.Fprintf(&request, heredoc.Doc(`
 				public_key=%s
 				persistent_keepalive_interval=%d
 				preshared_key=%s
 			`),
 			peer.PublicKey, peer.KeepAlive, peer.PreSharedKey,
-		))
+		)
 		if peer.Endpoint != nil {
-			request.WriteString(fmt.Sprintf("endpoint=%s\n", *peer.Endpoint))
+			fmt.Fprintf(&request, "endpoint=%s\n", *peer.Endpoint)
 		}
 
 		if len(peer.AllowedIPs) > 0 {
 			for _, ip := range peer.AllowedIPs {
-				request.WriteString(fmt.Sprintf("allowed_ip=%s\n", ip.String()))
+				fmt.Fprintf(&request, "allowed_ip=%s\n", ip.String())
 			}
 		} else {
 			request.WriteString(heredoc.Doc(`
