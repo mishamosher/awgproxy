@@ -12,7 +12,7 @@ jobs:
 
     name: Cross compile WireProxy
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     env:
       workdir: ./WireProxy
