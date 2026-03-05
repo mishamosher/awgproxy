@@ -470,9 +470,11 @@ func (d VirtualTun) pingIPs() {
 }
 
 func (d VirtualTun) StartPingIPs() {
+	d.PingRecordLock.Lock()
 	for _, addr := range d.Conf.CheckAlive {
 		d.PingRecord[addr.String()] = 0
 	}
+	d.PingRecordLock.Unlock()
 
 	go func() {
 		for {
