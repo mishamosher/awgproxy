@@ -1,4 +1,4 @@
-package wireproxy
+package awgproxy
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ const space = " "
 
 func responseWith(req *http.Request, statusCode int) *http.Response {
 	statusText := http.StatusText(statusCode)
-	body := "wireproxy:" + space + req.Proto + space + strconv.Itoa(statusCode) + space + statusText + "\r\n"
+	body := "awgproxy:" + space + req.Proto + space + strconv.Itoa(statusCode) + space + statusText + "\r\n"
 
 	return &http.Response{
 		StatusCode: statusCode,

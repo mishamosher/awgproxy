@@ -1,0 +1,43 @@
+name: Cross compile AWGProxy
+
+on:
+  workflow_dispatch:
+  create:
+     tags:
+       - v*
+
+jobs:
+  AWGProxy:
+
+    name: Cross compile AWGProxy
+
+    runs-on: ubuntu-latest
+
+    env:
+      workdir: ./AWGProxy
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Git clone AWGProxy
+        run: |
+          git clone https://github.com/mishamosher/awgproxy.git --branch ${GITHUB_REF_NAME} --single-branch ${{ env.workdir }}
+          cp ./.github/awgproxy-releaser.yml ${{ env.workdir }}/.goreleaser.yml
+
+      - name: Set up GoReleaser
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.5"
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          workdir: ${{ env.workdir }}
+          version: latest
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

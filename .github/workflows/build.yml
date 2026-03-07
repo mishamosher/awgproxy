@@ -8,9 +8,12 @@ on:
       - '**'
   workflow_dispatch:
 
+env:
+  ANDROID_NDK_URL: https://dl.google.com/android/repository/android-ndk-r27d-linux.zip
+
 jobs:
-  windowsAmd64Build:
-    name: Build Windows amd64 Version
+  android386Build:
+    name: Build Android 386 Version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,19 +21,23 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.26"
-      - name: Building Windows amd64 Version
+      - name: Building Android 386 Version
         run: |
-          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o WireProxy_amd64.exe -v ./cmd/wireproxy
-          mkdir release_windows_amd64
-          mv WireProxy_amd64.exe wireproxy.exe
-          cp wireproxy.exe release_windows_amd64/wireproxy.exe
-      - name: Upload Windows amd64 Version
+          mkdir android_ndk
+          wget --no-verbose ${ANDROID_NDK_URL} -O android_ndk/ndk.zip
+          unzip android_ndk/ndk.zip -d android_ndk
+          mv "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)" android_ndk/extracted
+          CGO_ENABLED=1 GOOS=android GOARCH=386 CC="$(realpath "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang")" go build -o AWGProxy_386 -v ./cmd/awgproxy
+          mkdir release_android_386
+          mv AWGProxy_386 awgproxy
+          cp awgproxy release_android_386/awgproxy
+      - name: Upload Android 386 Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_windows_amd64
-          path: release_windows_amd64
-  windowsArm64Build:
-    name: Build Windows arm64 Version
+          name: AWGProxy_android_386
+          path: release_android_386
+  androidAmd64Build:
+    name: Build Android amd64 Version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,19 +45,23 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.26"
-      - name: Building Windows arm64 Version
+      - name: Building Android amd64 Version
         run: |
-          CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -o WireProxy_arm64.exe -v ./cmd/wireproxy
-          mkdir release_windows_arm64
-          mv WireProxy_arm64.exe wireproxy.exe
-          cp wireproxy.exe release_windows_arm64/wireproxy.exe
-      - name: Upload Windows arm64 Version
+          mkdir android_ndk
+          wget --no-verbose ${ANDROID_NDK_URL} -O android_ndk/ndk.zip
+          unzip android_ndk/ndk.zip -d android_ndk
+          mv "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)" android_ndk/extracted
+          CGO_ENABLED=1 GOOS=android GOARCH=amd64 CC="$(realpath "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang")" go build -o AWGProxy_amd64 -v ./cmd/awgproxy
+          mkdir release_android_amd64
+          mv AWGProxy_amd64 awgproxy
+          cp awgproxy release_android_amd64/awgproxy
+      - name: Upload Android amd64 Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_windows_arm64
-          path: release_windows_arm64
-  linuxAmd64Build:
-    name: Build Linux amd64 Version
+          name: AWGProxy_android_amd64
+          path: release_android_amd64
+  androidArmBuild:
+    name: Build Android arm Version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -58,19 +69,23 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.26"
-      - name: Building Linux amd64 Version
+      - name: Building Android arm Version
         run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o WireProxy_amd64 -v ./cmd/wireproxy
-          mkdir release_linux_amd64
-          mv WireProxy_amd64 wireproxy
-          cp wireproxy release_linux_amd64/wireproxy
-      - name: Upload Linux amd64 Version
+          mkdir android_ndk
+          wget --no-verbose ${ANDROID_NDK_URL} -O android_ndk/ndk.zip
+          unzip android_ndk/ndk.zip -d android_ndk
+          mv "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)" android_ndk/extracted
+          CGO_ENABLED=1 GOOS=android GOARCH=arm CC="$(realpath "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang")" go build -o AWGProxy_arm -v ./cmd/awgproxy
+          mkdir release_android_arm
+          mv AWGProxy_arm awgproxy
+          cp awgproxy release_android_arm/awgproxy
+      - name: Upload Android arm Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_linux_amd64
-          path: release_linux_amd64
-  linuxArm64Build:
-    name: Build Linux arm64 Version
+          name: AWGProxy_android_arm
+          path: release_android_arm
+  androidArm64Build:
+    name: Build Android arm64 Version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -78,37 +93,21 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.26"
-      - name: Building Linux arm64 Version
+      - name: Building Android arm64 Version
         run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o WireProxy_arm64 -v ./cmd/wireproxy
-          mkdir release_linux_arm64
-          mv WireProxy_arm64 wireproxy
-          cp wireproxy release_linux_arm64/wireproxy
-      - name: Upload Linux arm64 Version
+          mkdir android_ndk
+          wget --no-verbose ${ANDROID_NDK_URL} -O android_ndk/ndk.zip
+          unzip android_ndk/ndk.zip -d android_ndk
+          mv "android_ndk/$(ls -1 -d android_ndk/*/ | cut -f 2 -d '/' | head -1)" android_ndk/extracted
+          CGO_ENABLED=1 GOOS=android GOARCH=arm64 CC="$(realpath "android_ndk/extracted/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang")" go build -o AWGProxy_arm64 -v ./cmd/awgproxy
+          mkdir release_android_arm64
+          mv AWGProxy_arm64 awgproxy
+          cp awgproxy release_android_arm64/awgproxy
+      - name: Upload Android arm64 Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_linux_arm64
-          path: release_linux_arm64
-  linuxS390xBuild:
-    name: Build Linux s390x Version
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setting up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.26"
-      - name: Building Linux s390x Version
-        run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -o WireProxy_s390x -v ./cmd/wireproxy
-          mkdir release_linux_s390x
-          mv WireProxy_s390x wireproxy
-          cp wireproxy release_linux_s390x/wireproxy
-      - name: Upload Linux s390x Version
-        uses: actions/upload-artifact@v4
-        with:
-          name: WireProxy_linux_s390x
-          path: release_linux_s390x
+          name: AWGProxy_android_arm64
+          path: release_android_arm64
   darwinAmd64Build:
     name: Build Darwin amd64 Version
     runs-on: ubuntu-latest
@@ -120,14 +119,14 @@ jobs:
           go-version: "1.26"
       - name: Building Darwin amd64 Version
         run: |
-          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o WireProxy_amd64 -v ./cmd/wireproxy
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o AWGProxy_amd64 -v ./cmd/awgproxy
           mkdir release_darwin_amd64
-          mv WireProxy_amd64 wireproxy
-          cp wireproxy release_darwin_amd64/wireproxy
+          mv AWGProxy_amd64 awgproxy
+          cp awgproxy release_darwin_amd64/awgproxy
       - name: Upload Darwin amd64 Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_darwin_amd64
+          name: AWGProxy_darwin_amd64
           path: release_darwin_amd64
   darwinArm64Build:
     name: Build Darwin arm64 Version
@@ -140,12 +139,292 @@ jobs:
           go-version: "1.26"
       - name: Building Darwin arm64 Version
         run: |
-          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o WireProxy_arm64 -v ./cmd/wireproxy
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o AWGProxy_arm64 -v ./cmd/awgproxy
           mkdir release_darwin_arm64
-          mv WireProxy_arm64 wireproxy
-          cp wireproxy release_darwin_arm64/wireproxy
+          mv AWGProxy_arm64 awgproxy
+          cp awgproxy release_darwin_arm64/awgproxy
       - name: Upload Darwin arm64 Version
         uses: actions/upload-artifact@v4
         with:
-          name: WireProxy_darwin_arm64
+          name: AWGProxy_darwin_arm64
           path: release_darwin_arm64
+  linux386Build:
+    name: Build Linux 386 Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Linux 386 Version
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -o AWGProxy_386 -v ./cmd/awgproxy
+          mkdir release_linux_386
+          mv AWGProxy_386 awgproxy
+          cp awgproxy release_linux_386/awgproxy
+      - name: Upload Linux 386 Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_linux_386
+          path: release_linux_386
+  linuxAmd64Build:
+    name: Build Linux amd64 Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Linux amd64 Version
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o AWGProxy_amd64 -v ./cmd/awgproxy
+          mkdir release_linux_amd64
+          mv AWGProxy_amd64 awgproxy
+          cp awgproxy release_linux_amd64/awgproxy
+      - name: Upload Linux amd64 Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_linux_amd64
+          path: release_linux_amd64
+  linuxArmBuild:
+    name: Build Linux arm Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Linux arm Version
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -o AWGProxy_arm -v ./cmd/awgproxy
+          mkdir release_linux_arm
+          mv AWGProxy_arm awgproxy
+          cp awgproxy release_linux_arm/awgproxy
+      - name: Upload Linux arm Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_linux_arm
+          path: release_linux_arm
+  linuxArm64Build:
+    name: Build Linux arm64 Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Linux arm64 Version
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o AWGProxy_arm64 -v ./cmd/awgproxy
+          mkdir release_linux_arm64
+          mv AWGProxy_arm64 awgproxy
+          cp awgproxy release_linux_arm64/awgproxy
+      - name: Upload Linux arm64 Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_linux_arm64
+          path: release_linux_arm64
+  linuxMIPShfBuild:
+    name: Build Linux mips-hf Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Linux mips-hf Version
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=mips GOMIPS=hardfloat go build -o AWGProxy_mips-hf -v ./cmd/awgproxy
+          mkdir release_linux_mips-hf
+          mv AWGProxy_mips-hf awgproxy
+          cp awgproxy release_linux_mips-hf/awgproxy
+      - name: Upload Linux mips-hf Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_linux_mips-hf
+          path: release_linux_mips-hf
+  linuxMIPSsfBuild:
+    name: Build Linux mips-sf Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Linux mips-sf Version
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=mips GOMIPS=softfloat go build -o AWGProxy_mips-sf -v ./cmd/awgproxy
+          mkdir release_linux_mips-sf
+          mv AWGProxy_mips-sf awgproxy
+          cp awgproxy release_linux_mips-sf/awgproxy
+      - name: Upload Linux mips-sf Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_linux_mips-sf
+          path: release_linux_mips-sf
+  linuxMIPSLEhfBuild:
+    name: Build Linux mipsle-hf Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Linux mipsle-hf Version
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=mipsle GOMIPS=hardfloat go build -o AWGProxy_mipsle-hf -v ./cmd/awgproxy
+          mkdir release_linux_mipsle-hf
+          mv AWGProxy_mipsle-hf awgproxy
+          cp awgproxy release_linux_mipsle-hf/awgproxy
+      - name: Upload Linux mipsle-hf Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_linux_mipsle-hf
+          path: release_linux_mipsle-hf
+  linuxMIPSLEsfBuild:
+    name: Build Linux mipsle-sf Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Linux mipsle-sf Version
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=mipsle GOMIPS=softfloat go build -o AWGProxy_mipsle-sf -v ./cmd/awgproxy
+          mkdir release_linux_mipsle-sf
+          mv AWGProxy_mipsle-sf awgproxy
+          cp awgproxy release_linux_mipsle-sf/awgproxy
+      - name: Upload Linux mipsle-sf Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_linux_mipsle-sf
+          path: release_linux_mipsle-sf
+  linuxPPC64leBuild:
+    name: Build Linux ppc64le Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Linux ppc64le Version
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=ppc64le go build -o AWGProxy_ppc64le -v ./cmd/awgproxy
+          mkdir release_linux_ppc64le
+          mv AWGProxy_ppc64le awgproxy
+          cp awgproxy release_linux_ppc64le/awgproxy
+      - name: Upload Linux ppc64le Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_linux_ppc64le
+          path: release_linux_ppc64le
+  linuxRISCV64Build:
+    name: Build Linux riscv64 Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Linux riscv64 Version
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=riscv64 go build -o AWGProxy_riscv64 -v ./cmd/awgproxy
+          mkdir release_linux_riscv64
+          mv AWGProxy_riscv64 awgproxy
+          cp awgproxy release_linux_riscv64/awgproxy
+      - name: Upload Linux riscv64 Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_linux_riscv64
+          path: release_linux_riscv64
+  linuxS390xBuild:
+    name: Build Linux s390x Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Linux s390x Version
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -o AWGProxy_s390x -v ./cmd/awgproxy
+          mkdir release_linux_s390x
+          mv AWGProxy_s390x awgproxy
+          cp awgproxy release_linux_s390x/awgproxy
+      - name: Upload Linux s390x Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_linux_s390x
+          path: release_linux_s390x
+  windows386Build:
+    name: Build Windows 386 Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Windows 386 Version
+        run: |
+          CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -o AWGProxy_386.exe -v ./cmd/awgproxy
+          mkdir release_windows_386
+          mv AWGProxy_386.exe awgproxy.exe
+          cp awgproxy.exe release_windows_386/awgproxy.exe
+      - name: Upload Windows 386 Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_windows_386
+          path: release_windows_386
+  windowsAmd64Build:
+    name: Build Windows amd64 Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Windows amd64 Version
+        run: |
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o AWGProxy_amd64.exe -v ./cmd/awgproxy
+          mkdir release_windows_amd64
+          mv AWGProxy_amd64.exe awgproxy.exe
+          cp awgproxy.exe release_windows_amd64/awgproxy.exe
+      - name: Upload Windows amd64 Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_windows_amd64
+          path: release_windows_amd64
+  windowsArm64Build:
+    name: Build Windows arm64 Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Building Windows arm64 Version
+        run: |
+          CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -o AWGProxy_arm64.exe -v ./cmd/awgproxy
+          mkdir release_windows_arm64
+          mv AWGProxy_arm64.exe awgproxy.exe
+          cp awgproxy.exe release_windows_arm64/awgproxy.exe
+      - name: Upload Windows arm64 Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: AWGProxy_windows_arm64
+          path: release_windows_arm64

@@ -1,6 +1,7 @@
 /main
-/wireproxy
+/awgproxy
 *.sw?
 /.idea
 .goreleaser.yml
 *.conf
+/android_ndk

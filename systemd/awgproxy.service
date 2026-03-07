@@ -1,20 +1,20 @@
 [Unit]
-Description=Wireproxy socks5/http tunnel
+Description=Awgproxy socks5/http tunnel
 Wants=network-online.target
 After=network-online.target
 
 [Service]
-User=wireproxy
-Group=wireproxy
-SyslogIdentifier=wireproxy
+User=awgproxy
+Group=awgproxy
+SyslogIdentifier=awgproxy
 Type=simple
 Restart=on-failure
 RestartSec=30s
 
 DynamicUser=yes
-LoadCredential=conf:/etc/wireproxy.conf
-ExecStartPre=/opt/wireproxy/wireproxy -n -c ${CREDENTIALS_DIRECTORY}/conf
-ExecStart=/opt/wireproxy/wireproxy -c ${CREDENTIALS_DIRECTORY}/conf
+LoadCredential=conf:/etc/awgproxy.conf
+ExecStartPre=/opt/awgproxy/awgproxy -n -c ${CREDENTIALS_DIRECTORY}/conf
+ExecStart=/opt/awgproxy/awgproxy -c ${CREDENTIALS_DIRECTORY}/conf
 
 # Required if <1024 port
 #AmbientCapabilities=CAP_NET_BIND_SERVICE
