@@ -26,10 +26,10 @@ type DeviceSetting struct {
 func CreateIPCRequest(conf *DeviceConfig) (*DeviceSetting, error) {
 	var request bytes.Buffer
 
-	_, _ = fmt.Fprintf(&request, "private_key=%s\n", conf.SecretKey)
+	fmt.Fprintf(&request, "private_key=%s\n", conf.SecretKey)
 
 	if conf.ListenPort != nil {
-		_, _ = fmt.Fprintf(&request, "listen_port=%d\n", *conf.ListenPort)
+		fmt.Fprintf(&request, "listen_port=%d\n", *conf.ListenPort)
 	}
 
 	if conf.ASecConfig != nil {
@@ -38,72 +38,72 @@ func CreateIPCRequest(conf *DeviceConfig) (*DeviceSetting, error) {
 		var aSecBuilder strings.Builder
 
 		if aSecConfig.hasJunkPacketCount {
-			_, _ = fmt.Fprintf(&aSecBuilder, "jc=%d\n", aSecConfig.junkPacketCount)
+			fmt.Fprintf(&aSecBuilder, "jc=%d\n", aSecConfig.junkPacketCount)
 		}
 		if aSecConfig.hasJunkPacketMinSize {
-			_, _ = fmt.Fprintf(&aSecBuilder, "jmin=%d\n", aSecConfig.junkPacketMinSize)
+			fmt.Fprintf(&aSecBuilder, "jmin=%d\n", aSecConfig.junkPacketMinSize)
 		}
 		if aSecConfig.hasJunkPacketMaxSize {
-			_, _ = fmt.Fprintf(&aSecBuilder, "jmax=%d\n", aSecConfig.junkPacketMaxSize)
+			fmt.Fprintf(&aSecBuilder, "jmax=%d\n", aSecConfig.junkPacketMaxSize)
 		}
 		if aSecConfig.hasInitPacketJunkSize {
-			_, _ = fmt.Fprintf(&aSecBuilder, "s1=%d\n", aSecConfig.initPacketJunkSize)
+			fmt.Fprintf(&aSecBuilder, "s1=%d\n", aSecConfig.initPacketJunkSize)
 		}
 		if aSecConfig.hasResponsePacketJunkSize {
-			_, _ = fmt.Fprintf(&aSecBuilder, "s2=%d\n", aSecConfig.responsePacketJunkSize)
+			fmt.Fprintf(&aSecBuilder, "s2=%d\n", aSecConfig.responsePacketJunkSize)
 		}
 		if aSecConfig.hasCookieReplyPacketJunkSize {
-			_, _ = fmt.Fprintf(&aSecBuilder, "s3=%d\n", aSecConfig.cookieReplyPacketJunkSize)
+			fmt.Fprintf(&aSecBuilder, "s3=%d\n", aSecConfig.cookieReplyPacketJunkSize)
 		}
 		if aSecConfig.hasTransportPacketJunkSize {
-			_, _ = fmt.Fprintf(&aSecBuilder, "s4=%d\n", aSecConfig.transportPacketJunkSize)
+			fmt.Fprintf(&aSecBuilder, "s4=%d\n", aSecConfig.transportPacketJunkSize)
 		}
 		if aSecConfig.hasInitPacketMagicHeader {
-			_, _ = fmt.Fprintf(&aSecBuilder,
+			fmt.Fprintf(&aSecBuilder,
 				"h1=%s\n",
 				formatMagicHeaderInterval(aSecConfig.initPacketMagicHeader, aSecConfig.initPacketMagicHeaderMax),
 			)
 		}
 		if aSecConfig.hasResponsePacketMagicHeader {
-			_, _ = fmt.Fprintf(&aSecBuilder,
+			fmt.Fprintf(&aSecBuilder,
 				"h2=%s\n",
 				formatMagicHeaderInterval(aSecConfig.responsePacketMagicHeader, aSecConfig.responsePacketMagicHeaderMax),
 			)
 		}
 		if aSecConfig.hasUnderloadPacketMagicHeader {
-			_, _ = fmt.Fprintf(&aSecBuilder,
+			fmt.Fprintf(&aSecBuilder,
 				"h3=%s\n",
 				formatMagicHeaderInterval(aSecConfig.underloadPacketMagicHeader, aSecConfig.underloadPacketMagicHeaderMax),
 			)
 		}
 		if aSecConfig.hasTransportPacketMagicHeader {
-			_, _ = fmt.Fprintf(&aSecBuilder,
+			fmt.Fprintf(&aSecBuilder,
 				"h4=%s\n",
 				formatMagicHeaderInterval(aSecConfig.transportPacketMagicHeader, aSecConfig.transportPacketMagicHeaderMax),
 			)
 		}
 
 		if aSecConfig.i1 != nil {
-			_, _ = fmt.Fprintf(&aSecBuilder, "i1=%s\n", *aSecConfig.i1)
+			fmt.Fprintf(&aSecBuilder, "i1=%s\n", *aSecConfig.i1)
 		}
 		if aSecConfig.i2 != nil {
-			_, _ = fmt.Fprintf(&aSecBuilder, "i2=%s\n", *aSecConfig.i2)
+			fmt.Fprintf(&aSecBuilder, "i2=%s\n", *aSecConfig.i2)
 		}
 		if aSecConfig.i3 != nil {
-			_, _ = fmt.Fprintf(&aSecBuilder, "i3=%s\n", *aSecConfig.i3)
+			fmt.Fprintf(&aSecBuilder, "i3=%s\n", *aSecConfig.i3)
 		}
 		if aSecConfig.i4 != nil {
-			_, _ = fmt.Fprintf(&aSecBuilder, "i4=%s\n", *aSecConfig.i4)
+			fmt.Fprintf(&aSecBuilder, "i4=%s\n", *aSecConfig.i4)
 		}
 		if aSecConfig.i5 != nil {
-			_, _ = fmt.Fprintf(&aSecBuilder, "i5=%s\n", *aSecConfig.i5)
+			fmt.Fprintf(&aSecBuilder, "i5=%s\n", *aSecConfig.i5)
 		}
 
 		request.WriteString(aSecBuilder.String())
 	}
 
 	for _, peer := range conf.Peers {
-		_, _ = fmt.Fprintf(&request, heredoc.Doc(`
+		fmt.Fprintf(&request, heredoc.Doc(`
 				public_key=%s
 				persistent_keepalive_interval=%d
 				preshared_key=%s
@@ -111,12 +111,12 @@ func CreateIPCRequest(conf *DeviceConfig) (*DeviceSetting, error) {
 			peer.PublicKey, peer.KeepAlive, peer.PreSharedKey,
 		)
 		if peer.Endpoint != nil {
-			_, _ = fmt.Fprintf(&request, "endpoint=%s\n", *peer.Endpoint)
+			fmt.Fprintf(&request, "endpoint=%s\n", *peer.Endpoint)
 		}
 
 		if len(peer.AllowedIPs) > 0 {
 			for _, ip := range peer.AllowedIPs {
-				_, _ = fmt.Fprintf(&request, "allowed_ip=%s\n", ip.String())
+				fmt.Fprintf(&request, "allowed_ip=%s\n", ip.String())
 			}
 		} else {
 			request.WriteString(heredoc.Doc(`
@@ -131,8 +131,9 @@ func CreateIPCRequest(conf *DeviceConfig) (*DeviceSetting, error) {
 }
 
 // StartWireguard creates a tun interface on netstack given a configuration
-func StartWireguard(conf *DeviceConfig, logLevel int) (*VirtualTun, error) {
-	setting, err := CreateIPCRequest(conf)
+func StartWireguard(conf *Configuration, logLevel int) (*VirtualTun, error) {
+	deviceConf := conf.Device
+	setting, err := CreateIPCRequest(deviceConf)
 	if err != nil {
 		return nil, err
 	}
@@ -152,10 +153,29 @@ func StartWireguard(conf *DeviceConfig, logLevel int) (*VirtualTun, error) {
 		return nil, err
 	}
 
+	hasV4 := false
+	hasV6 := false
+	for _, addr := range setting.DeviceAddr {
+		if addr.Is4() {
+			hasV4 = true
+		}
+		if addr.Is6() {
+			hasV6 = true
+		}
+	}
+
+	if conf.Resolve.ResolveStrategy == "auto" {
+		if hasV4 && !hasV6 {
+			conf.Resolve.ResolveStrategy = "ipv4"
+		} else {
+			conf.Resolve.ResolveStrategy = "ipv6"
+		}
+	}
 	return &VirtualTun{
 		Tnet:           tnet,
 		Dev:            dev,
-		Conf:           conf,
+		Conf:           deviceConf,
+		ResolveConfig:  conf.Resolve,
 		SystemDNS:      len(setting.DNS) == 0,
 		PingRecord:     make(map[string]uint64),
 		PingRecordLock: new(sync.Mutex),
