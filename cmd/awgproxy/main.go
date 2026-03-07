@@ -257,7 +257,7 @@ func main() {
 
 	lock("ready")
 
-	tun, err := awgproxy.StartWireguard(conf.Device, logLevel)
+	tun, err := awgproxy.StartWireguard(conf, logLevel)
 	if err != nil {
 		log.Fatal(err)
 	}
