@@ -23,7 +23,7 @@ More info on supported peers/protocols:
 - You simply want to use awgproxy as a way to proxy some traffic.
 - You don't want root permission just to change awgproxy settings.
 
-Users who want something similar but without amnezia/euphoria support can use the original [wireproxy](https://github.com/whyvl/wireproxy) by [@whyvl](https://github.com/whyvl).
+Users who want something similar but without amnezia/euphoria support can use the original [wireproxy](https://github.com/windtf/wireproxy) by [@windtf](https://github.com/windtf).
 
 # Feature
 
@@ -33,7 +33,7 @@ Users who want something similar but without amnezia/euphoria support can use th
 # TODO
 
 - UDP Support in SOCKS5 (currently experimental). For more info, please read:
-  - https://github.com/whyvl/wireproxy/issues/30
+  - https://github.com/windtf/wireproxy/issues/30
   - https://github.com/things-go/go-socks5/pull/63
   - https://github.com/things-go/go-socks5/pull/65
   - Current implementation in this repo: https://github.com/ge9/go-socks5/commit/43e95d04ce4e10595a8b8395f0c9b793a906130d
@@ -150,6 +150,10 @@ BindAddress = 127.0.0.1:25345
 #Username = ...
 # Avoid using spaces in the password field
 #Password = ...
+
+# Specifying certificate and key enables HTTPS
+#CertFile = ...
+#KeyFile = ...
 ```
 
 Alternatively, if you already have a wireguard config, you can import it in the
@@ -201,6 +205,18 @@ Target = service-two.servicenet:5001
 [TCPServerTunnel]
 ListenPort = 5080
 Target = service-three.servicenet:80
+
+[UDPProxyTunnel]
+BindAddress = 127.0.0.1:53
+Target = 1.1.1.1:53
+InactivityTimeout = 30 # If its set to 0, it will never timeout
+
+[Resolve]
+# Set DNS Resovle Strategy
+# `ipv4`: Prioritize A records.
+# `ipv6`: Prioritize AAAA records       .
+# `auto` (Default): If the WireGuard interface has IPv4 address only, it's equivalent to `ipv4`, otherwise it's equivalent to `ipv6`.
+ResolveStrategy = auto 
 ```
 
 awgproxy can also allow peers to connect to it:
