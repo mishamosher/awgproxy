@@ -15,13 +15,11 @@ interface for whatever reasons.
 
 # Sponsor
 
-<a href="https://proxy-seller.com/"><img src="./assets/proxy-seller.svg" width="300" alt="Proxy-Seller"></a>
+<a href="https://proxy-seller.com/?partner=1Z1IPV519ZG31Q"><img src="./assets/proxy-seller.png" width="300" alt="Proxy-Seller"></a>
 
-Coupon **WIREPROXY** - 15% discount on IPv4, IPv6, ISP, and residential proxies, and 10% off mobile proxies.
+Use coupon **WIREPROXY** - 15% discount on IPv4, IPv6, ISP, and residential proxies, and 10% off mobile proxies.
 
-### General Information
-
-[Proxy-Seller](https://proxy-seller.com/) has been in the market since 2014.
+[Proxy-Seller](https://proxy-seller.com/?partner=1Z1IPV519ZG31Q) has been in the market since 2014.
 
 They provide IPv4, IPv6, ISP, Residential, and Mobile proxies that support both HTTP(S) and SOCKS5 connection protocols. Additionally, they offer a mobile panel to create your own rotating mobile proxies, and provide easy-to-setup equipment with worldwide shipping. After setting up your own mobile proxies, Proxy-Seller can help you rent them out if the location needs it, allowing you to receive a percentage of the sales. The service offers flexible residential proxy solutions for individuals and businesses, with competitive rates starting at $3.5 per 1GB and a low-cost trial option for $1.99.
 
