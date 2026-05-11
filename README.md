@@ -13,6 +13,30 @@ and exposes a socks5/http proxy or tunnels on the machine. This can be useful if
 to connect to certain sites via a wireguard peer, but can't be bothered to setup a new network
 interface for whatever reasons.
 
+# Sponsor
+
+<a href="https://proxy-seller.com/"><img src="./assets/proxy-seller.svg" width="300" alt="Proxy-Seller"></a>
+
+Coupon **WIREPROXY** - 15% discount on IPv4, IPv6, ISP, and residential proxies, and 10% off mobile proxies.
+
+### General Information
+
+[Proxy-Seller](https://proxy-seller.com/) has been in the market since 2014.
+
+They provide IPv4, IPv6, ISP, Residential, and Mobile proxies that support both HTTP(S) and SOCKS5 connection protocols. Additionally, they offer a mobile panel to create your own rotating mobile proxies, and provide easy-to-setup equipment with worldwide shipping. After setting up your own mobile proxies, Proxy-Seller can help you rent them out if the location needs it, allowing you to receive a percentage of the sales. The service offers flexible residential proxy solutions for individuals and businesses, with competitive rates starting at $3.5 per 1GB and a low-cost trial option for $1.99.
+
+Their loyal support team is available to address any issues individually at any time of the day or night. Many customers appreciate this level of support, as well as their very affordable prices, starting from $0.70 per IP.
+
+Proxy-Seller provides proxies for a wide range of use cases, including web scraping, gaming, social media management, multi-accounting, ad verification, market research, e-commerce monitoring, SEO tracking, and automation tasks.
+
+**Outstanding Features:**
+
+1. Mobile panel for your own proxy farms
+2. Residential, SOCKS5, HTTPS, mobile, and datacenter proxies
+3. Auto-renewal feature for proxies
+
+**Important:** If any technical issues arise, your proxies can be replaced with proxies from other countries, even if those locations are more expensive. Alternatively, support can add a few extra days to your existing proxy package.
+
 # Why you might want this
 
 - You simply want to use wireguard as a way to proxy some traffic.
@@ -25,13 +49,6 @@ anything.
 
 Users who want something similar but for Amnezia VPN can use [this fork](https://github.com/artem-russkikh/wireproxy-awg)
 of wireproxy by [@artem-russkikh](https://github.com/artem-russkikh).
-
-# Sponsor
-
-This project is supported by [IPRoyal](https://iproyal.com/?r=795836). You can get premium quality proxies at unbeatable prices
-with a discount using [this referral link](https://iproyal.com/?r=795836)! 🚀
-
-![IPRoyal](/assets/iproyal.png)
 
 # Feature
 
