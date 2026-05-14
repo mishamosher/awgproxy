@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# PROVIDE: awgproxy
+# REQUIRE: DAEMON
+# KEYWORD: nojail
+#
+
+#
+# Add the following lines to /etc/rc.conf to enable awgproxy:
+#
+#awgproxy_enable="YES"
+#
+
+. /etc/rc.subr
+
+name=awgproxy
+rcvar=awgproxy_enable
+
+load_rc_config $name
+procname="/bin/awgproxy"
+
+awgproxy_enable=${awgproxy_enable:-"NO"}
+
+awgproxy_bin=/bin/awgproxy
+awgproxy_conf=/etc/awgproxy.conf
+
+command=${awgproxy_bin}
+command_args="-s -d -c ${awgproxy_conf}"
+
+run_rc_command "$1"
