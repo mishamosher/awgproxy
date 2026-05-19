@@ -1,52 +1,29 @@
-# wireproxy
+# awgproxy
 
 [![ISC licensed](https://img.shields.io/badge/license-ISC-blue)](./LICENSE)
-[![Build status](https://github.com/octeep/wireproxy/actions/workflows/build.yml/badge.svg)](https://github.com/octeep/wireproxy/actions)
-[![Documentation](https://img.shields.io/badge/godoc-wireproxy-blue)](https://pkg.go.dev/github.com/octeep/wireproxy)
+[![Build status](https://github.com/mishamosher/awgproxy/actions/workflows/build.yml/badge.svg)](https://github.com/mishamosher/awgproxy/actions)
+[![Documentation](https://img.shields.io/badge/godoc-awgproxy-blue)](https://pkg.go.dev/github.com/mishamosher/awgproxy)
 
-A wireguard client that exposes itself as a socks5/http proxy or tunnels.
+A wireguard+amnezia/euphoria client that exposes itself as a socks5/http proxy or tunnels.
 
 # What is this
 
-`wireproxy` is a completely userspace application that connects to a wireguard peer,
+`awgproxy` is a completely userspace application that connects to a wireguard/amnezia/euphoria peer,
 and exposes a socks5/http proxy or tunnels on the machine. This can be useful if you need
-to connect to certain sites via a wireguard peer, but can't be bothered to setup a new network
-interface for whatever reasons.
+to connect to certain sites via a wireguard/amnezia/euphoria peer, but can't be bothered to setup a new network
+interface for whatever reason.
 
-# Sponsor
-
-<a href="https://proxy-seller.com/?partner=1Z1IPV519ZG31Q"><img src="./assets/proxy-seller.png" width="300" alt="Proxy-Seller"></a>
-
-Use coupon **WIREPROXY** - 15% discount on IPv4, IPv6, ISP, and residential proxies, and 10% off mobile proxies.
-
-[Proxy-Seller](https://proxy-seller.com/?partner=1Z1IPV519ZG31Q) has been in the market since 2014.
-
-They provide IPv4, IPv6, ISP, Residential, and Mobile proxies that support both HTTP(S) and SOCKS5 connection protocols. Additionally, they offer a mobile panel to create your own rotating mobile proxies, and provide easy-to-setup equipment with worldwide shipping. After setting up your own mobile proxies, Proxy-Seller can help you rent them out if the location needs it, allowing you to receive a percentage of the sales. The service offers flexible residential proxy solutions for individuals and businesses, with competitive rates starting at $3.5 per 1GB and a low-cost trial option for $1.99.
-
-Their loyal support team is available to address any issues individually at any time of the day or night. Many customers appreciate this level of support, as well as their very affordable prices, starting from $0.70 per IP.
-
-Proxy-Seller provides proxies for a wide range of use cases, including web scraping, gaming, social media management, multi-accounting, ad verification, market research, e-commerce monitoring, SEO tracking, and automation tasks.
-
-**Outstanding Features:**
-
-1. Mobile panel for your own proxy farms
-2. Residential, SOCKS5, HTTPS, mobile, and datacenter proxies
-3. Auto-renewal feature for proxies
-
-**Important:** If any technical issues arise, your proxies can be replaced with proxies from other countries, even if those locations are more expensive. Alternatively, support can add a few extra days to your existing proxy package.
+More info on supported peers/protocols:
+- https://github.com/WireGuard/wireguard-go
+- https://github.com/amnezia-vpn/amneziawg-go
+- https://github.com/amnezia-vpn/euphoria
 
 # Why you might want this
 
-- You simply want to use wireguard as a way to proxy some traffic.
-- You don't want root permission just to change wireguard settings.
+- You simply want to use awgproxy as a way to proxy some traffic.
+- You don't want root permission just to change awgproxy settings.
 
-Currently, I'm running wireproxy connected to a wireguard server in another country,
-and configured my browser to use wireproxy for certain sites. It's pretty useful since
-wireproxy is completely isolated from my network interfaces, and I don't need root to configure
-anything.
-
-Users who want something similar but for Amnezia VPN can use [this fork](https://github.com/artem-russkikh/wireproxy-awg)
-of wireproxy by [@artem-russkikh](https://github.com/artem-russkikh).
+Users who want something similar but without amnezia/euphoria support can use the original [wireproxy](https://github.com/windtf/wireproxy) by [@windtf](https://github.com/windtf).
 
 # Feature
 
@@ -55,17 +32,21 @@ of wireproxy by [@artem-russkikh](https://github.com/artem-russkikh).
 
 # TODO
 
-- UDP Support in SOCKS5
+- UDP Support in SOCKS5 (currently experimental). For more info, please read:
+  - https://github.com/windtf/wireproxy/issues/30
+  - https://github.com/things-go/go-socks5/pull/63
+  - https://github.com/things-go/go-socks5/pull/65
+  - Current implementation in this repo: https://github.com/ge9/go-socks5/commit/43e95d04ce4e10595a8b8395f0c9b793a906130d
 - UDP static routing
 
 # Usage
 
 ```bash
-./wireproxy [-c path to config]
+./awgproxy [-c path to config]
 ```
 
 ```bash
-usage: wireproxy [-h|--help] [-c|--config "<value>"] [-s|--silent]
+usage: awgproxy [-h|--help] [-c|--config "<value>"] [-s|--silent]
                  [-d|--daemon] [-i|--info "<value>"] [-v|--version]
                  [-n|--configtest]
 
@@ -75,32 +56,34 @@ Arguments:
 
   -h  --help        Print help information
   -c  --config      Path of configuration file
-                    Default paths: /etc/wireproxy/wireproxy.conf, $HOME/.config/wireproxy.conf
+                    Default paths: /etc/awgproxy/awgproxy.conf, $HOME/.config/awgproxy.conf
   -s  --silent      Silent mode
-  -d  --daemon      Make wireproxy run in background
+  -d  --daemon      Make awgproxy run in background
   -i  --info        Specify the address and port for exposing health status
   -v  --version     Print version
   -n  --configtest  Configtest mode. Only check the configuration file for
                     validity.
 ```
 
-# Build instruction
+# Build instructions
 
 ```bash
-git clone https://github.com/octeep/wireproxy
-cd wireproxy
+git clone https://github.com/mishamosher/awgproxy
+cd awgproxy
 make
 ```
+
+Please read the [Build Action](/.github/workflows/build.yml) for cross-compile examples.
 
 # Install
 
 ```bash
-go install github.com/windtf/wireproxy/cmd/wireproxy@v1.0.9 # or @latest
+go install github.com/mishamosher/awgproxy/cmd/awgproxy@latest # or @v[tag]
 ```
 
 # Use with VPN
 
-Instructions for using wireproxy with Firefox container tabs and auto-start on MacOS can be found [here](/UseWithVPN.md).
+Instructions for using awgproxy with Firefox container tabs and auto-start on macOS can be found [here](/UseWithVPN.md).
 
 # Sample config file
 
@@ -138,11 +121,11 @@ Target = play.cubecraft.net:25565
 ListenPort = 3422
 Target = localhost:25545
 
-# STDIOTunnel is a tunnel connecting the standard input and output of the wireproxy
+# STDIOTunnel is a tunnel connecting the standard input and output of the awgproxy
 # process to the specified TCP target via wireguard.
-# This is especially useful to use wireproxy as a ProxyCommand parameter in openssh
+# This is especially useful to use awgproxy as a ProxyCommand parameter in openssh
 # For example:
-#    ssh -o ProxyCommand='wireproxy -c myconfig.conf' ssh.myserver.net
+#    ssh -o ProxyCommand='awgproxy -c myconfig.conf' ssh.myserver.net
 # Flow:
 # Piped command -->(wireguard)--> ssh.myserver.net:22
 [STDIOTunnel]
@@ -174,7 +157,7 @@ BindAddress = 127.0.0.1:25345
 ```
 
 Alternatively, if you already have a wireguard config, you can import it in the
-wireproxy config file like this:
+awgproxy config file like this:
 
 ```ini
 WGConfig = <path to the wireguard config>
@@ -191,7 +174,7 @@ WGConfig = <path to the wireguard config>
 ```
 
 Having multiple peers is also supported. `AllowedIPs` would need to be specified
-such that wireproxy would know which peer to forward to.
+such that awgproxy would know which peer to forward to.
 
 ```ini
 [Interface]
@@ -236,7 +219,7 @@ InactivityTimeout = 30 # If its set to 0, it will never timeout
 ResolveStrategy = auto 
 ```
 
-Wireproxy can also allow peers to connect to it:
+awgproxy can also allow peers to connect to it:
 
 ```ini
 [Interface]
@@ -251,7 +234,7 @@ AllowedIPs = 10.254.254.100/32
 
 # Health endpoint
 
-Wireproxy supports exposing a health endpoint for monitoring purposes.
+awgproxy supports exposing a health endpoint for monitoring purposes.
 The argument `--info/-i` specifies an address and port (e.g. `localhost:9080`), which exposes a HTTP server that provides health status metric of the server.
 
 Currently two endpoints are implemented:
@@ -314,7 +297,3 @@ CheckAlive = 1.1.1.1
 If nothing is set for `CheckAlive`, an empty JSON object with 200 will be the response.
 
 The peer which the ICMP ping packet is routed to depends on the `AllowedIPs` set for each peers.
-
-# Stargazers over time
-
-[![Stargazers over time](https://starchart.cc/octeep/wireproxy.svg)](https://starchart.cc/octeep/wireproxy)
