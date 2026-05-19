@@ -30,7 +30,7 @@ var default_config_paths = []string{
 	os.Getenv("HOME") + "/.config/awgproxy.conf",
 }
 
-var version = "1.1.2-2-dev"
+var version = "1.1.2-3-dev"
 
 func panicIfError(err error) {
 	if err != nil {
