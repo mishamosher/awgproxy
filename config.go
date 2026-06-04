@@ -1,4 +1,4 @@
-package wireproxy
+package awgproxy
 
 import (
 	"encoding/base64"
@@ -32,6 +32,7 @@ type DeviceConfig struct {
 	ListenPort         *int
 	CheckAlive         []netip.Addr
 	CheckAliveInterval int
+	ASecConfig         *ASecConfigType
 }
 
 type UDPProxyTunnelConfig struct {
@@ -312,6 +313,12 @@ func ParseInterface(cfg *ini.File, device *DeviceConfig) error {
 		device.CheckAliveInterval = value
 	}
 
+	aSecConfig, err := ParseASecConfig(section)
+	if err != nil {
+		return err
+	}
+	device.ASecConfig = aSecConfig
+
 	return nil
 }
 
@@ -464,7 +471,7 @@ func parseResolveConfig(section *ini.Section) (*ResolveConfig, error) {
 
 	resolvStrategy, _ := parseString(section, "ResolveStrategy")
 	config.ResolveStrategy = resolvStrategy
-  
+
 	return config, nil
 }
 
@@ -498,7 +505,12 @@ func parseUDPProxyTunnelConfig(section *ini.Section) (RoutineSpawner, error) {
 
 // Takes a function that parses an individual section into a config, and apply it on all
 // specified sections
-func parseRoutinesConfig(routines *[]RoutineSpawner, cfg *ini.File, sectionName string, f func(*ini.Section) (RoutineSpawner, error)) error {
+func parseRoutinesConfig(
+	routines *[]RoutineSpawner,
+	cfg *ini.File,
+	sectionName string,
+	f func(*ini.Section) (RoutineSpawner, error),
+) error {
 	sections, err := cfg.SectionsByName(sectionName)
 	if err != nil {
 		return nil
@@ -597,7 +609,7 @@ func ParseConfig(path string) (*Configuration, error) {
 			return nil, err
 	  }
   }
-    
+
 	err = parseRoutinesConfig(&routinesSpawners, cfg, "UDPProxyTunnel", parseUDPProxyTunnelConfig)
 	if err != nil {
 		return nil, err
