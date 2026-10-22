@@ -70,10 +70,10 @@ func configFilePath() (string, bool) {
 }
 
 // get the file paths for TLS cert and key from the config
-func tlsFilePaths(routines []wireproxy.RoutineSpawner) []string {
+func tlsFilePaths(routines []awgproxy.RoutineSpawner) []string {
 	var paths []string
 	for _, routine := range routines {
-		http, ok := routine.(*wireproxy.HTTPConfig)
+		http, ok := routine.(*awgproxy.HTTPConfig)
 		if !ok {
 			continue
 		}
@@ -87,7 +87,7 @@ func tlsFilePaths(routines []wireproxy.RoutineSpawner) []string {
 	return paths
 }
 
-func lock(stage string) {
+func lock(stage string, roFiles ...string) {
 	// Do not use sandbox-related operations on Android
 	if runtime.GOOS == "android" {
 		return
@@ -142,8 +142,8 @@ func lock(stage string) {
 			landlock.RWFiles("/proc/self/fd").IgnoreIfMissing(),
 		}
 
-		if len(roFilles) > 0 {
-			for _, file := range roFilles {
+		if len(roFiles) > 0 {
+			for _, file := range roFiles {
 				rules = append(rules, landlock.ROFiles(file).IgnoreIfMissing())
 			}
 		}
