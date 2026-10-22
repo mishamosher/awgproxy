@@ -122,12 +122,8 @@ func (s *HTTPServer) serve(conn net.Conn) {
 	switch req.Method {
 	case http.MethodConnect:
 		peer, err = s.handleConn(req, conn)
-	case http.MethodGet:
-		peer, err = s.handle(req)
 	default:
-		_ = responseWith(req, http.StatusMethodNotAllowed).Write(conn)
-		log.Printf("unsupported protocol: %s\n", req.Method)
-		return
+		peer, err = s.handle(req)
 	}
 	if err != nil {
 		if peer != nil {

@@ -16,7 +16,7 @@ import (
 	"github.com/landlock-lsm/go-landlock/landlock"
 
 	"github.com/akamensky/argparse"
-	"github.com/amnezia-vpn/amneziawg-go/device"
+	"github.com/amnezia-vpn/amneziawg-go/v3/device"
 	"github.com/mishamosher/awgproxy"
 	"suah.dev/protect"
 )
