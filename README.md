@@ -28,7 +28,7 @@ Users who want something similar but without amnezia/euphoria support can use th
 # Feature
 
 - TCP static routing for client and server
-- SOCKS5/HTTP proxy (currently only CONNECT is supported)
+- SOCKS5/HTTP proxy (HTTP proxy supports both CONNECT tunneling and plain HTTP forwarding)
 - Transparent TLS ([SNI](https://en.wikipedia.org/wiki/Server_Name_Indication)) proxy
 
 # TODO
