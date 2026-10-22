@@ -1,4 +1,4 @@
-package wireproxy
+package awgproxy
 
 // TLS SNI extraction approach based on Andrew Ayer's sniproxy:
 // https://www.agwa.name/blog/post/writing_an_sni_proxy_in_go/media/sniproxy.go
