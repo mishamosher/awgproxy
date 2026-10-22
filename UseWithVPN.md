@@ -1,39 +1,40 @@
 # Getting a wireguard/amnezia/euphoria Server
 
-You can create your own wireguard/amnezia/euphoria server using a host service like DigitalOcean,
-or you can get a VPN service that provides wireguard/amnezia/euphoria configs.
+This fork supports both standard WireGuard configs and AmneziaWG configs (which add
+obfuscation fields like `Jc`, `Jmin`, `Jmax`, `S1`, `S2`, `H1`–`H4`).
 
-ProtonVPN can be used, it has a functional WireGuard config generator.
+You can get an AmneziaWG config from your VPN provider or by running your own
+AmneziaWG server. Export the config from the Amnezia client app, or use
+`wg genkey` / `wg pubkey` and configure the obfuscation parameters manually.
 
-Simply go to <https://account.protonvpn.com/downloads> and scroll down to the
-wireguard section to generate your configs, then paste into the appropriate
-section below.
+The config file you download is used as-is via `WGConfig` (see below), so no
+conversion is needed.
 
-# Simple Setup for multiple SOCKS configs for firefox
+# Simple Setup for multiple SOCKS configs for Firefox
 
 Create a folder for your configs and startup scripts. Can be the same place as
 this code. That path you will use below. For reference this text uses
 `/Users/jonny/vpntabs`
 
-For each VPN you want to run, you will download/generate your
-wireguard/amnezia/euphoria config and name it appropriately (e.g.
-`ProtonUS.adblock.server.conf`) and then create two new files from those below
-with similar names (e.g. `ProtonUS.adblock.conf` and `ProtonUS.adblock.sh`)
+For each VPN you want to run, you will download your config and name
+it appropriately (e.g. `MyVPN.adblock.server.conf`) and then create two new
+files from those below with similar names (e.g. `MyVPN.adblock.conf` and
+`MyVPN.adblock.sh`)
 
 You will also create a launch script, the reference below is only for macOS. The
 naming should also be similar (e.g.
-`/Users/jonny/Library/LaunchAgents/com.ProtonUS.adblock.plist`)
+`/Users/jonny/Library/LaunchAgents/com.MyVPN.adblock.plist`)
 
 ## Config File
 
-Make sure you use a unique port for every separate server
-I recommend you set proxy authentication, you can use the same user/pass for all
+Make sure you use a unique port for every separate server.
+You can optionally set proxy authentication; the same user/pass can be reused across servers.
 
 ```ini
-# Link to the Downloaded config
-WGConfig = /Users/jonny/vpntabs/ProtonUS.adblock.server.conf
+# Link to the downloaded config (WireGuard or AmneziaWG format)
+WGConfig = /Users/jonny/vpntabs/MyVPN.adblock.server.conf
 
-# Used for firefox containers
+# Used for Firefox containers
 [Socks5]
 BindAddress = 127.0.0.1:25344 # Update the port here for each new server
 
@@ -48,13 +49,13 @@ BindAddress = 127.0.0.1:25344 # Update the port here for each new server
 
 This is a bash script to facilitate startup, not strictly essential, but adds
 ease.
-Note, you MUST update the first path to wherever you installed this code to.
+Note, you MUST update the first path to wherever you installed this binary.
 Make sure you use the path for the config file above, not the one you downloaded
-from e.g. protonvpn.
+from your provider.
 
 ```bash
 #!/bin/bash
-/Users/jonny/awgproxy/awgproxy -c /Users/jonny/vpntabs/ProtonUS.adblock.conf
+/Users/jonny/awgproxy/awgproxy -c /Users/jonny/vpntabs/MyVPN.adblock.conf
 ```
 
 ## macOS LaunchAgent
@@ -62,7 +63,7 @@ from e.g. protonvpn.
 To make it run every time you start your computer, you can create a launch agent
 in `$HOME/Library/LaunchAgents`. Name reference above.
 
-That file should contain the following, the label should be the same as the file
+That file should contain the following; the label should be the same as the file
 name and the paths should be set correctly:
 
 ```xml
@@ -71,9 +72,9 @@ name and the paths should be set correctly:
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.ProtonUS.adblock</string>
+    <string>com.MyVPN.adblock</string>
     <key>Program</key>
-    <string>/Users/jonny/vpntabs/ProtonUS.adblock.sh</string>
+    <string>/Users/jonny/vpntabs/MyVPN.adblock.sh</string>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
@@ -83,13 +84,13 @@ name and the paths should be set correctly:
 ```
 
 To enable it, run
-`launchctl load ~/Library/LaunchAgents/com.ProtonUS.adblock.plist` and
-`launchtl start ~/Library/LaunchAgents/com.PortonUS.adblock.plist`
+`launchctl load ~/Library/LaunchAgents/com.MyVPN.adblock.plist` and
+`launchctl start ~/Library/LaunchAgents/com.MyVPN.adblock.plist`
 
 # Firefox Setup
 
-You will need to enable the Multi Account Container Tabs extension and a proxy extension,
-you can use Sideberry, Container Proxy, or something else.
+You will need to enable the Multi Account Container Tabs extension and a proxy extension.
+Sideberry works well, but Container Proxy also works.
 
 Create a container to be dedicated to this VPN, and then add the IP, port,
 username, and password from above.
