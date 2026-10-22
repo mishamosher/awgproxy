@@ -9,27 +9,28 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"runtime"
 	"strconv"
 	"syscall"
 
 	"github.com/landlock-lsm/go-landlock/landlock"
 
 	"github.com/akamensky/argparse"
-	"github.com/windtf/wireproxy"
-	"golang.zx2c4.com/wireguard/device"
+	"github.com/amnezia-vpn/amneziawg-go/device"
+	"github.com/mishamosher/awgproxy"
 	"suah.dev/protect"
 )
 
 // an argument to denote that this process was spawned by -d
 const daemonProcess = "daemon-process"
 
-// default paths for wireproxy config file
+// default paths for awgproxy config file
 var default_config_paths = []string{
-	"/etc/wireproxy/wireproxy.conf",
-	os.Getenv("HOME") + "/.config/wireproxy.conf",
+	"/etc/awgproxy/awgproxy.conf",
+	os.Getenv("HOME") + "/.config/awgproxy.conf",
 }
 
-var version = "1.0.8-dev"
+var version = "1.1.2-4-dev"
 
 func panicIfError(err error) {
 	if err != nil {
@@ -86,7 +87,12 @@ func tlsFilePaths(routines []wireproxy.RoutineSpawner) []string {
 	return paths
 }
 
-func lock(stage string, roFilles ...string) {
+func lock(stage string) {
+	// Do not use sandbox-related operations on Android
+	if runtime.GOOS == "android" {
+		return
+	}
+
 	switch stage {
 	case "boot":
 		exePath := executablePath()
@@ -163,7 +169,12 @@ func extractPort(addr string) uint16 {
 	return uint16(port)
 }
 
-func lockNetwork(sections []wireproxy.RoutineSpawner, infoAddr *string) {
+func lockNetwork(sections []awgproxy.RoutineSpawner, infoAddr *string) {
+	// Do not use sandbox-related operations on Android
+	if runtime.GOOS == "android" {
+		return
+	}
+
 	var rules []landlock.Rule
 	if infoAddr != nil && *infoAddr != "" {
 		rules = append(rules, landlock.BindTCP(extractPort(*infoAddr)))
@@ -171,15 +182,15 @@ func lockNetwork(sections []wireproxy.RoutineSpawner, infoAddr *string) {
 
 	for _, section := range sections {
 		switch section := section.(type) {
-		case *wireproxy.TCPServerTunnelConfig:
+		case *awgproxy.TCPServerTunnelConfig:
 			rules = append(rules, landlock.ConnectTCP(extractPort(section.Target)))
-		case *wireproxy.HTTPConfig:
+		case *awgproxy.HTTPConfig:
 			rules = append(rules, landlock.BindTCP(extractPort(section.BindAddress)))
-		case *wireproxy.TCPClientTunnelConfig:
+		case *awgproxy.TCPClientTunnelConfig:
 			rules = append(rules, landlock.BindTCP(uint16(section.BindAddress.Port)))
-		case *wireproxy.Socks5Config:
+		case *awgproxy.Socks5Config:
 			rules = append(rules, landlock.BindTCP(extractPort(section.BindAddress)))
-		case *wireproxy.SNIConfig:
+		case *awgproxy.SNIConfig:
 			rules = append(rules, landlock.BindTCP(extractPort(section.BindAddress)))
 		}
 	}
@@ -207,11 +218,11 @@ func main() {
 		args = []string{args[0]}
 		args = append(args, os.Args[2:]...)
 	}
-	parser := argparse.NewParser("wireproxy", "Userspace wireguard client for proxying")
+	parser := argparse.NewParser("awgproxy", "Userspace AmneziaWG client for proxying")
 
 	config := parser.String("c", "config", &argparse.Options{Help: "Path of configuration file"})
 	silent := parser.Flag("s", "silent", &argparse.Options{Help: "Silent mode"})
-	daemon := parser.Flag("d", "daemon", &argparse.Options{Help: "Make wireproxy run in background"})
+	daemon := parser.Flag("d", "daemon", &argparse.Options{Help: "Make awgproxy run in background"})
 	info := parser.String("i", "info", &argparse.Options{Help: "Specify the address and port for exposing health status"})
 	printVerison := parser.Flag("v", "version", &argparse.Options{Help: "Print version"})
 	configTest := parser.Flag("n", "configtest", &argparse.Options{Help: "Configtest mode. Only check the configuration file for validity."})
@@ -223,7 +234,7 @@ func main() {
 	}
 
 	if *printVerison {
-		fmt.Printf("wireproxy, version %s\n", version)
+		fmt.Printf("awgproxy, version %s\n", version)
 		return
 	}
 
@@ -240,7 +251,7 @@ func main() {
 		lock("read-config")
 	}
 
-	conf, err := wireproxy.ParseConfig(*config)
+	conf, err := awgproxy.ParseConfig(*config)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -279,7 +290,7 @@ func main() {
 
 	lock("ready", tlsFilePaths(conf.Routines)...)
 
-	tun, err := wireproxy.StartWireguard(conf, logLevel)
+	tun, err := awgproxy.StartWireguard(conf, logLevel)
 	if err != nil {
 		log.Fatal(err)
 	}

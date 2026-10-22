@@ -1,4 +1,4 @@
-package wireproxy
+package awgproxy
 
 import (
 	"encoding/base64"
@@ -33,6 +33,7 @@ type DeviceConfig struct {
 	ListenPort         *int
 	CheckAlive         []netip.Addr
 	CheckAliveInterval int
+	ASecConfig         *ASecConfigType
 }
 
 type UDPProxyTunnelConfig struct {
@@ -325,6 +326,12 @@ func ParseInterface(cfg *ini.File, device *DeviceConfig) error {
 
 		device.CheckAliveInterval = value
 	}
+
+	aSecConfig, err := ParseASecConfig(section)
+	if err != nil {
+		return err
+	}
+	device.ASecConfig = aSecConfig
 
 	return nil
 }
