@@ -1,4 +1,4 @@
-package wireproxy
+package awgproxy
 
 import (
 	"bufio"
