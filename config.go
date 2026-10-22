@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/go-ini/ini"
@@ -58,17 +59,27 @@ type TCPServerTunnelConfig struct {
 }
 
 type Socks5Config struct {
-	BindAddress string
-	Username    string
-	Password    string
+	BindAddress   string
+	Username      string
+	Password      string
+	TunnelDomains []*regexp.Regexp
+	LogDomains    bool
+}
+
+type SNIConfig struct {
+	BindAddress   string
+	TunnelDomains []*regexp.Regexp
+	LogDomains    bool
 }
 
 type HTTPConfig struct {
-	BindAddress string
-	Username    string
-	Password    string
-	CertFile    string
-	KeyFile     string
+	BindAddress   string
+	Username      string
+	Password      string
+	CertFile      string
+	KeyFile       string
+	TunnelDomains []*regexp.Regexp
+	LogDomains    bool
 }
 
 type ResolveConfig struct {
@@ -309,6 +320,9 @@ func ParseInterface(cfg *ini.File, device *DeviceConfig) error {
 		if len(checkAlive) == 0 {
 			return errors.New("CheckAliveInterval is only valid when CheckAlive is set")
 		}
+		if value <= 0 {
+			return errors.New("CheckAliveInterval should be greater than zero")
+		}
 
 		device.CheckAliveInterval = value
 	}
@@ -424,6 +438,41 @@ func parseTCPServerTunnelConfig(section *ini.Section) (RoutineSpawner, error) {
 	return config, nil
 }
 
+// parseRegexList reads a whitelist of regular expressions from a section key.
+// Each occurrence of the key (one per line; AllowShadows is enabled) is treated
+// as a single, complete regex — the value is NOT split on commas, so quantifiers
+// like `a{2,4}` work. An absent key yields no patterns. An invalid pattern is a
+// configuration error, so --configtest rejects it before any traffic flows.
+func parseRegexList(section *ini.Section, keyName string) ([]*regexp.Regexp, error) {
+	key, err := section.GetKey(keyName)
+	if err != nil {
+		return nil, nil
+	}
+
+	var patterns []*regexp.Regexp
+	for _, raw := range key.ValueWithShadows() {
+		raw = strings.TrimSpace(raw)
+		if raw == "" {
+			continue
+		}
+		re, cerr := regexp.Compile(raw)
+		if cerr != nil {
+			return nil, errors.New("invalid " + keyName + " regex `" + raw + "`: " + cerr.Error())
+		}
+		patterns = append(patterns, re)
+	}
+	return patterns, nil
+}
+
+// parseBoolKey reads an optional boolean key, defaulting to false when absent.
+func parseBoolKey(section *ini.Section, keyName string) (bool, error) {
+	key, err := section.GetKey(keyName)
+	if err != nil {
+		return false, nil
+	}
+	return key.Bool()
+}
+
 func parseSocks5Config(section *ini.Section) (RoutineSpawner, error) {
 	config := &Socks5Config{}
 
@@ -438,6 +487,42 @@ func parseSocks5Config(section *ini.Section) (RoutineSpawner, error) {
 
 	password, _ := parseString(section, "Password")
 	config.Password = password
+
+	tunnelDomains, err := parseRegexList(section, "TunnelDomains")
+	if err != nil {
+		return nil, err
+	}
+	config.TunnelDomains = tunnelDomains
+
+	logDomains, err := parseBoolKey(section, "LogDomains")
+	if err != nil {
+		return nil, err
+	}
+	config.LogDomains = logDomains
+
+	return config, nil
+}
+
+func parseSNIConfig(section *ini.Section) (RoutineSpawner, error) {
+	config := &SNIConfig{}
+
+	bindAddress, err := parseString(section, "BindAddress")
+	if err != nil {
+		return nil, err
+	}
+	config.BindAddress = bindAddress
+
+	tunnelDomains, err := parseRegexList(section, "TunnelDomains")
+	if err != nil {
+		return nil, err
+	}
+	config.TunnelDomains = tunnelDomains
+
+	logDomains, err := parseBoolKey(section, "LogDomains")
+	if err != nil {
+		return nil, err
+	}
+	config.LogDomains = logDomains
 
 	return config, nil
 }
@@ -462,6 +547,18 @@ func parseHTTPConfig(section *ini.Section) (RoutineSpawner, error) {
 
 	keyFile, _ := parseString(section, "KeyFile")
 	config.KeyFile = keyFile
+
+	tunnelDomains, err := parseRegexList(section, "TunnelDomains")
+	if err != nil {
+		return nil, err
+	}
+	config.TunnelDomains = tunnelDomains
+
+	logDomains, err := parseBoolKey(section, "LogDomains")
+	if err != nil {
+		return nil, err
+	}
+	config.LogDomains = logDomains
 
 	return config, nil
 }
@@ -496,6 +593,9 @@ func parseUDPProxyTunnelConfig(section *ini.Section) (RoutineSpawner, error) {
 		if err != nil {
 			return nil, err
 		}
+		if timeoutVal < 0 {
+			return nil, errors.New("InactivityTimeout should not be negative")
+		}
 		inactivityTimeout = timeoutVal
 	}
 	config.InactivityTimeout = inactivityTimeout
@@ -505,12 +605,7 @@ func parseUDPProxyTunnelConfig(section *ini.Section) (RoutineSpawner, error) {
 
 // Takes a function that parses an individual section into a config, and apply it on all
 // specified sections
-func parseRoutinesConfig(
-	routines *[]RoutineSpawner,
-	cfg *ini.File,
-	sectionName string,
-	f func(*ini.Section) (RoutineSpawner, error),
-) error {
+func parseRoutinesConfig(routines *[]RoutineSpawner, cfg *ini.File, sectionName string, f func(*ini.Section) (RoutineSpawner, error)) error {
 	sections, err := cfg.SectionsByName(sectionName)
 	if err != nil {
 		return nil
@@ -603,12 +698,17 @@ func ParseConfig(path string) (*Configuration, error) {
 		return nil, err
 	}
 
+	err = parseRoutinesConfig(&routinesSpawners, cfg, "SNI", parseSNIConfig)
+	if err != nil {
+		return nil, err
+	}
+
 	if resolveSection, err := cfg.GetSection("Resolve"); err == nil {
 		resolve, err = parseResolveConfig(resolveSection)
 		if err != nil {
 			return nil, err
-	  }
-  }
+		}
+	}
 
 	err = parseRoutinesConfig(&routinesSpawners, cfg, "UDPProxyTunnel", parseUDPProxyTunnelConfig)
 	if err != nil {

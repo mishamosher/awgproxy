@@ -29,6 +29,7 @@ Users who want something similar but without amnezia/euphoria support can use th
 
 - TCP static routing for client and server
 - SOCKS5/HTTP proxy (currently only CONNECT is supported)
+- Transparent TLS ([SNI](https://en.wikipedia.org/wiki/Server_Name_Indication)) proxy
 
 # TODO
 
@@ -141,6 +142,20 @@ BindAddress = 127.0.0.1:25344
 # Avoid using spaces in the password field
 #Password = ...
 
+# Domain whitelist routing (optional). When TunnelDomains is set, only connections
+# whose destination host matches one of the patterns are routed through wireguard;
+# every other connection is dialed directly over your normal network. When
+# TunnelDomains is unset, all traffic is routed through wireguard (default).
+# Each TunnelDomains line is a single, full Go regular expression (RE2). Repeat
+# the key for multiple patterns; do NOT comma-separate (so quantifiers like {2,4}
+# keep working). Matching is case-insensitive and a trailing dot is ignored.
+#TunnelDomains = ^(.*\.)?example\.com$
+#TunnelDomains = ^ipinfo\.io$
+# Set LogDomains = true to log every connection's destination host and whether it
+# was routed to the TUNNEL or DIRECT. Useful for discovering which domains your
+# apps reach before writing TunnelDomains. Off by default.
+#LogDomains = true
+
 # http creates a http proxy on your LAN, and all traffic would be routed via wireguard.
 [http]
 BindAddress = 127.0.0.1:25345
@@ -154,6 +169,19 @@ BindAddress = 127.0.0.1:25345
 # Specifying certificate and key enables HTTPS
 #CertFile = ...
 #KeyFile = ...
+
+# TunnelDomains / LogDomains work here too (same semantics as [Socks5] above).
+#TunnelDomains = ^(.*\.)?example\.com$
+#LogDomains = true
+
+# SNI creates a transparent TLS proxy on your LAN, and all traffic would be routed via wireguard,
+# using Server Name Indication as routing destination.
+[SNI]
+BindAddress = 0.0.0.0:443
+
+# TunnelDomains / LogDomains work here too, matched against the TLS SNI hostname.
+#TunnelDomains = ^(.*\.)?example\.com$
+#LogDomains = true
 ```
 
 Alternatively, if you already have a wireguard config, you can import it in the
